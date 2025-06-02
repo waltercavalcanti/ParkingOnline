@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingOnline.Infrastructur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParkingOnline.WebApi", "src\ParkingOnline.WebApi\ParkingOnline.WebApi.csproj", "{CD3ED3DE-8910-4982-83DC-0623A6A2E2C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D19A38C-951B-4FE2-AD94-F2341391A906} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1DADC036-D6A8-4DE1-B4F9-334251FFE9E5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CD3ED3DE-8910-4982-83DC-0623A6A2E2C5} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {41A414F0-DC60-4878-AE99-296C8CF371D3}
