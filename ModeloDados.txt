@@ -1,0 +1,29 @@
+Veiculo
+- Id
+- Marca
+- Modelo
+- Placa
+- ClienteId
+
+Cliente
+- Id
+- Nome (Opcional)
+- Telefone (Obrigatório)
+
+Vaga
+- Id
+- CodigoLocalizacao (E01 - Externa, I01 - Interna)
+- Ocupada
+
+Ticket
+- Id
+- DataEntrada
+- DataSaida
+- Valor
+- VeiculoId
+- VagaId
+
+Tarifa
+- Id
+- ValorInicial
+- ValorPorHora
