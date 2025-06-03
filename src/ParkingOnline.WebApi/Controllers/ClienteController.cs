@@ -26,7 +26,7 @@ public class ClienteController(IClienteRepository clienteRepository) : Controlle
         var cliente = await clienteRepository.GetClienteByIdAsync(id);
 
         return cliente == null
-            ? NotFound($"Não há Cliente cadastrado com o id {id}.")
+            ? NotFound($"Não há cliente cadastrado com o id {id}.")
             : Ok(cliente);
     }
 
