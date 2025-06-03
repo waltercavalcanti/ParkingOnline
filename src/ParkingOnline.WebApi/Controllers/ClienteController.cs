@@ -8,66 +8,82 @@ namespace ParkingOnline.WebApi.Controllers;
 [ApiController]
 public class ClienteController(IClienteRepository clienteRepository) : ControllerBase
 {
-	[HttpGet]
-	[Route("GetAll")]
-	public async Task<ActionResult> GetAllClientesAsync()
-	{
-		var clientes = await clienteRepository.GetAllClientesAsync();
+    [HttpGet]
+    [Route("GetAll")]
+    public async Task<ActionResult> GetAllClientesAsync()
+    {
+        var clientes = await clienteRepository.GetAllClientesAsync();
 
-		return clientes == null || !clientes.Any()
-			? NotFound("Não há clientes cadastrados.")
-			: Ok(clientes);
-	}
+        return clientes == null || !clientes.Any()
+            ? NotFound("Não há clientes cadastrados.")
+            : Ok(clientes);
+    }
 
-	[HttpGet]
-	[Route("GetById/{id}")]
-	public async Task<ActionResult> GetClienteByIdAsync(int id)
-	{
-		var cliente = await clienteRepository.GetClienteByIdAsync(id);
+    [HttpGet]
+    [Route("GetById/{id}", Name = "GetClienteById")]
+    public async Task<ActionResult> GetClienteByIdAsync(int id)
+    {
+        var cliente = await clienteRepository.GetClienteByIdAsync(id);
 
-		return cliente == null
-			? NotFound($"Não há Cliente cadastrado com o id {id}.")
-			: Ok(cliente);
-	}
+        return cliente == null
+            ? NotFound($"Não há Cliente cadastrado com o id {id}.")
+            : Ok(cliente);
+    }
 
-	[HttpPost]
-	[Route("Add")]
-	public async Task<ActionResult> AddClienteAsync(ClienteAddDTO clienteDTO)
-	{
-		var cliente = await clienteRepository.AddClienteAsync(clienteDTO);
+    [HttpPost]
+    [Route("Add")]
+    public async Task<ActionResult> AddClienteAsync(ClienteAddDTO clienteDTO)
+    {
+        var cliente = await clienteRepository.AddClienteAsync(clienteDTO);
 
-		return Ok(cliente);
-	}
+        return CreatedAtAction("GetClienteById", new { id = cliente.Id }, cliente);
+    }
 
-	[HttpDelete]
-	[Route("Delete/{id}")]
-	public async Task<ActionResult> DeleteClienteAsync(int id)
-	{
-		try
-		{
-			await clienteRepository.DeleteClienteAsync(id);
+    [HttpDelete]
+    [Route("Delete/{id}")]
+    public async Task<ActionResult> DeleteClienteAsync(int id)
+    {
+        try
+        {
+            var cliente = await clienteRepository.GetClienteByIdAsync(id);
 
-			return Ok("Cliente excluído com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            if (cliente == null)
+            {
+                return NotFound($"Não há cliente cadastrado com o id {id}.");
+            }
 
-	[HttpPut]
-	[Route("Update")]
-	public async Task<ActionResult> UpdateClienteAsync(ClienteUpdateDTO clienteDTO)
-	{
-		try
-		{
-			await clienteRepository.UpdateClienteAsync(clienteDTO);
+            await clienteRepository.DeleteClienteAsync(id);
 
-			return Ok("Cliente atualizado com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("Update/{id}")]
+    public async Task<ActionResult> UpdateClienteAsync(int id, ClienteUpdateDTO clienteDTO)
+    {
+        try
+        {
+            var cliente = await clienteRepository.GetClienteByIdAsync(id);
+
+            if (cliente == null)
+            {
+                return NotFound($"Não há cliente cadastrado com o id {id}.");
+            }
+
+            clienteDTO.Id = id;
+
+            await clienteRepository.UpdateClienteAsync(clienteDTO);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

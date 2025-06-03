@@ -1,44 +1,86 @@
-﻿using ParkingOnline.Core.DTOs;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using ParkingOnline.Core.DTOs;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
-using System.Linq.Expressions;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class VeiculoRepository : IVeiculoRepository
+public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepository
 {
-	public Task<Veiculo> AddVeiculoAsync(VeiculoAddDTO veiculoDTO)
-	{
-		throw new NotImplementedException();
-	}
+    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
 
-	public Task DeleteVeiculoAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task<Veiculo> AddVeiculoAsync(VeiculoAddDTO veiculoDTO)
+    {
+        using var conexao = GetConexao();
 
-	public Task<IEnumerable<Veiculo>> GetAllVeiculosAsync()
-	{
-		throw new NotImplementedException();
-	}
+        var query = "INSERT INTO Veiculo (Marca, Modelo, Placa, ClienteId) OUTPUT INSERTED.Id VALUES (@Marca, @Modelo, @Placa, @ClienteId)";
+        var parameters = new
+        {
+            veiculoDTO.Marca,
+            veiculoDTO.Modelo,
+            veiculoDTO.Placa,
+            veiculoDTO.ClienteId
+        };
 
-	public Task<Veiculo> GetVeiculoByIdAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+        var id = conexao.ExecuteScalarAsync<int>(query, parameters).Result;
 
-	public Task<IEnumerable<Veiculo>> GetVeiculosWhereAsync(Expression<Func<Veiculo, bool>> where)
-	{
-		throw new NotImplementedException();
-	}
+        return await GetVeiculoByIdAsync(id);
+    }
 
-	public Task UpdateVeiculoAsync(VeiculoUpdateDTO veiculoDTO)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task DeleteVeiculoAsync(int id)
+    {
+        using var conexao = GetConexao();
 
-	public bool VeiculoExists(int id)
-	{
-		throw new NotImplementedException();
-	}
+        var query = "DELETE FROM Veiculo WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        await conexao.ExecuteAsync(query, parameter);
+    }
+
+    public async Task<IEnumerable<Veiculo>> GetAllVeiculosAsync()
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Veiculo";
+        var veiculos = await conexao.QueryAsync<Veiculo>(query);
+
+        return veiculos.ToList();
+    }
+
+    public async Task<Veiculo> GetVeiculoByIdAsync(int id)
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Veiculo WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        var veiculo = await conexao.QueryFirstOrDefaultAsync<Veiculo>(query, parameter);
+
+        return veiculo;
+    }
+
+    public async Task UpdateVeiculoAsync(VeiculoUpdateDTO veiculoDTO)
+    {
+        using var conexao = GetConexao();
+
+        var query = "UPDATE Veiculo SET Marca = @Marca, Modelo = @Modelo, Placa = @Placa, ClienteId = @ClienteId WHERE Id = @Id";
+        var parameters = new
+        {
+            veiculoDTO.Id,
+            veiculoDTO.Marca,
+            veiculoDTO.Modelo,
+            veiculoDTO.Placa,
+            veiculoDTO.ClienteId
+        };
+
+        await conexao.ExecuteAsync(query, parameters);
+    }
 }

@@ -1,44 +1,82 @@
-﻿using ParkingOnline.Core.DTOs;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using ParkingOnline.Core.DTOs;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
-using System.Linq.Expressions;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class VagaRepository : IVagaRepository
+public class VagaRepository(IConfiguration configuration) : IVagaRepository
 {
-	public Task<Vaga> AddVagaAsync(VagaAddDTO vagaDTO)
-	{
-		throw new NotImplementedException();
-	}
+    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
 
-	public Task DeleteVagaAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task<Vaga> AddVagaAsync(VagaAddDTO vagaDTO)
+    {
+        using var conexao = GetConexao();
 
-	public Task<IEnumerable<Vaga>> GetAllVagasAsync()
-	{
-		throw new NotImplementedException();
-	}
+        var query = "INSERT INTO Vaga (Localizacao, Ocupada) OUTPUT INSERTED.Id VALUES (@Localizacao, @Ocupada)";
+        var parameters = new
+        {
+            vagaDTO.Localizacao,
+            vagaDTO.Ocupada
+        };
 
-	public Task<Vaga> GetVagaByIdAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+        var id = conexao.ExecuteScalarAsync<int>(query, parameters).Result;
 
-	public Task<IEnumerable<Vaga>> GetVagasWhereAsync(Expression<Func<Vaga, bool>> where)
-	{
-		throw new NotImplementedException();
-	}
+        return await GetVagaByIdAsync(id);
+    }
 
-	public Task UpdateVagaAsync(VagaUpdateDTO vagaDTO)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task DeleteVagaAsync(int id)
+    {
+        using var conexao = GetConexao();
 
-	public bool VagaExists(int id)
-	{
-		throw new NotImplementedException();
-	}
+        var query = "DELETE FROM Vaga WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        await conexao.ExecuteAsync(query, parameter);
+    }
+
+    public async Task<IEnumerable<Vaga>> GetAllVagasAsync()
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Vaga";
+        var vagas = await conexao.QueryAsync<Vaga>(query);
+
+        return vagas.ToList();
+    }
+
+    public async Task<Vaga> GetVagaByIdAsync(int id)
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Vaga WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        var vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, parameter);
+
+        return vaga;
+    }
+
+    public async Task UpdateVagaAsync(VagaUpdateDTO vagaDTO)
+    {
+        using var conexao = GetConexao();
+
+        var query = "UPDATE Vaga SET Localizacao = @Localizacao, Ocupada = @Ocupada WHERE Id = @Id";
+        var parameters = new
+        {
+            vagaDTO.Id,
+            vagaDTO.Localizacao,
+            vagaDTO.Ocupada
+        };
+
+        await conexao.ExecuteAsync(query, parameters);
+    }
 }

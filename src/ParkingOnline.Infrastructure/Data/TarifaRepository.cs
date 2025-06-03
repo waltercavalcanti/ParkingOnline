@@ -1,44 +1,82 @@
-﻿using ParkingOnline.Core.DTOs;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using ParkingOnline.Core.DTOs;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
-using System.Linq.Expressions;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class TarifaRepository : ITarifaRepository
+public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
 {
-	public Task<Tarifa> AddTarifaAsync(TarifaAddDTO tarifaDTO)
-	{
-		throw new NotImplementedException();
-	}
+    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
 
-	public Task DeleteTarifaAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task<Tarifa> AddTarifaAsync(TarifaAddDTO tarifaDTO)
+    {
+        using var conexao = GetConexao();
 
-	public Task<IEnumerable<Tarifa>> GetAllTarifasAsync()
-	{
-		throw new NotImplementedException();
-	}
+        var query = "INSERT INTO Tarifa (ValorInicial, ValorPorHora) OUTPUT INSERTED.Id VALUES (@ValorInicial, @ValorPorHora)";
+        var parameters = new
+        {
+            tarifaDTO.ValorInicial,
+            tarifaDTO.ValorPorHora
+        };
 
-	public Task<Tarifa> GetTarifaByIdAsync(int id)
-	{
-		throw new NotImplementedException();
-	}
+        var id = conexao.ExecuteScalarAsync<int>(query, parameters).Result;
 
-	public Task<IEnumerable<Tarifa>> GetTarifasWhereAsync(Expression<Func<Tarifa, bool>> where)
-	{
-		throw new NotImplementedException();
-	}
+        return await GetTarifaByIdAsync(id);
+    }
 
-	public bool TarifaExists(int id)
-	{
-		throw new NotImplementedException();
-	}
+    public async Task DeleteTarifaAsync(int id)
+    {
+        using var conexao = GetConexao();
 
-	public Task UpdateTarifaAsync(TarifaUpdateDTO tarifaDTO)
-	{
-		throw new NotImplementedException();
-	}
+        var query = "DELETE FROM Tarifa WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        await conexao.ExecuteAsync(query, parameter);
+    }
+
+    public async Task<IEnumerable<Tarifa>> GetAllTarifasAsync()
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Tarifa";
+        var tarifas = await conexao.QueryAsync<Tarifa>(query);
+
+        return tarifas.ToList();
+    }
+
+    public async Task<Tarifa> GetTarifaByIdAsync(int id)
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Tarifa WHERE Id = @Id";
+        var parameter = new
+        {
+            Id = id
+        };
+
+        var tarifa = await conexao.QueryFirstOrDefaultAsync<Tarifa>(query, parameter);
+
+        return tarifa;
+    }
+
+    public async Task UpdateTarifaAsync(TarifaUpdateDTO tarifaDTO)
+    {
+        using var conexao = GetConexao();
+
+        var query = "UPDATE Tarifa SET ValorInicial = @ValorInicial, ValorPorHora = @ValorPorHora WHERE Id = @Id";
+        var parameters = new
+        {
+            tarifaDTO.Id,
+            tarifaDTO.ValorInicial,
+            tarifaDTO.ValorPorHora
+        };
+
+        await conexao.ExecuteAsync(query, parameters);
+    }
 }

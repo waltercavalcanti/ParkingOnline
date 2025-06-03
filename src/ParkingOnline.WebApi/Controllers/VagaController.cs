@@ -8,66 +8,82 @@ namespace ParkingOnline.WebApi.Controllers;
 [ApiController]
 public class VagaController(IVagaRepository vagaRepository) : ControllerBase
 {
-	[HttpGet]
-	[Route("GetAll")]
-	public async Task<ActionResult> GetAllVagasAsync()
-	{
-		var vagas = await vagaRepository.GetAllVagasAsync();
+    [HttpGet]
+    [Route("GetAll")]
+    public async Task<ActionResult> GetAllVagasAsync()
+    {
+        var vagas = await vagaRepository.GetAllVagasAsync();
 
-		return vagas == null || !vagas.Any()
-			? NotFound("Não há vagas cadastradas.")
-			: Ok(vagas);
-	}
+        return vagas == null || !vagas.Any()
+            ? NotFound("Não há vagas cadastradas.")
+            : Ok(vagas);
+    }
 
-	[HttpGet]
-	[Route("GetById/{id}")]
-	public async Task<ActionResult> GetVagaByIdAsync(int id)
-	{
-		var vaga = await vagaRepository.GetVagaByIdAsync(id);
+    [HttpGet]
+    [Route("GetById/{id}", Name = "GetVagaById")]
+    public async Task<ActionResult> GetVagaByIdAsync(int id)
+    {
+        var vaga = await vagaRepository.GetVagaByIdAsync(id);
 
-		return vaga == null
-			? NotFound($"Não há Vaga cadastrada com o id {id}.")
-			: Ok(vaga);
-	}
+        return vaga == null
+            ? NotFound($"Não há vaga cadastrada com o id {id}.")
+            : Ok(vaga);
+    }
 
-	[HttpPost]
-	[Route("Add")]
-	public async Task<ActionResult> AddVagaAsync(VagaAddDTO vagaDTO)
-	{
-		var vaga = await vagaRepository.AddVagaAsync(vagaDTO);
+    [HttpPost]
+    [Route("Add")]
+    public async Task<ActionResult> AddVagaAsync(VagaAddDTO vagaDTO)
+    {
+        var vaga = await vagaRepository.AddVagaAsync(vagaDTO);
 
-		return Ok(vaga);
-	}
+        return CreatedAtAction("GetVagaById", new { id = vaga.Id }, vaga);
+    }
 
-	[HttpDelete]
-	[Route("Delete/{id}")]
-	public async Task<ActionResult> DeleteVagaAsync(int id)
-	{
-		try
-		{
-			await vagaRepository.DeleteVagaAsync(id);
+    [HttpDelete]
+    [Route("Delete/{id}")]
+    public async Task<ActionResult> DeleteVagaAsync(int id)
+    {
+        try
+        {
+            var vaga = await vagaRepository.GetVagaByIdAsync(id);
 
-			return Ok("Vaga excluída com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            if (vaga == null)
+            {
+                return NotFound($"Não há vaga cadastrada com o id {id}.");
+            }
 
-	[HttpPut]
-	[Route("Update")]
-	public async Task<ActionResult> UpdateVagaAsync(VagaUpdateDTO VagaDTO)
-	{
-		try
-		{
-			await vagaRepository.UpdateVagaAsync(VagaDTO);
+            await vagaRepository.DeleteVagaAsync(id);
 
-			return Ok("Vaga atualizada com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("Update/{id}")]
+    public async Task<ActionResult> UpdateVagaAsync(int id, VagaUpdateDTO vagaDTO)
+    {
+        try
+        {
+            var vaga = await vagaRepository.GetVagaByIdAsync(id);
+
+            if (vaga == null)
+            {
+                return NotFound($"Não há vaga cadastrada com o id {id}.");
+            }
+
+            vagaDTO.Id = id;
+
+            await vagaRepository.UpdateVagaAsync(vagaDTO);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }

@@ -8,66 +8,82 @@ namespace ParkingOnline.WebApi.Controllers;
 [ApiController]
 public class TarifaController(ITarifaRepository tarifaRepository) : ControllerBase
 {
-	[HttpGet]
-	[Route("GetAll")]
-	public async Task<ActionResult> GetAllTarifasAsync()
-	{
-		var tarifas = await tarifaRepository.GetAllTarifasAsync();
+    [HttpGet]
+    [Route("GetAll")]
+    public async Task<ActionResult> GetAllTarifasAsync()
+    {
+        var tarifas = await tarifaRepository.GetAllTarifasAsync();
 
-		return tarifas == null || !tarifas.Any()
-			? NotFound("Não há tarifas cadastradas.")
-			: Ok(tarifas);
-	}
+        return tarifas == null || !tarifas.Any()
+            ? NotFound("Não há tarifas cadastradas.")
+            : Ok(tarifas);
+    }
 
-	[HttpGet]
-	[Route("GetById/{id}")]
-	public async Task<ActionResult> GetTarifaByIdAsync(int id)
-	{
-		var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
+    [HttpGet]
+    [Route("GetById/{id}", Name = "GetTarifaById")]
+    public async Task<ActionResult> GetTarifaByIdAsync(int id)
+    {
+        var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
 
-		return tarifa == null
-			? NotFound($"Não há tarifa cadastrada com o id {id}.")
-			: Ok(tarifa);
-	}
+        return tarifa == null
+            ? NotFound($"Não há tarifa cadastrada com o id {id}.")
+            : Ok(tarifa);
+    }
 
-	[HttpPost]
-	[Route("Add")]
-	public async Task<ActionResult> AddTarifaAsync(TarifaAddDTO tarifaDTO)
-	{
-		var tarifa = await tarifaRepository.AddTarifaAsync(tarifaDTO);
+    [HttpPost]
+    [Route("Add")]
+    public async Task<ActionResult> AddTarifaAsync(TarifaAddDTO tarifaDTO)
+    {
+        var tarifa = await tarifaRepository.AddTarifaAsync(tarifaDTO);
 
-		return Ok(tarifa);
-	}
+        return CreatedAtAction("GetTarifaById", new { id = tarifa.Id }, tarifa);
+    }
 
-	[HttpDelete]
-	[Route("Delete/{id}")]
-	public async Task<ActionResult> DeleteTarifaAsync(int id)
-	{
-		try
-		{
-			await tarifaRepository.DeleteTarifaAsync(id);
+    [HttpDelete]
+    [Route("Delete/{id}")]
+    public async Task<ActionResult> DeleteTarifaAsync(int id)
+    {
+        try
+        {
+            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
 
-			return Ok("Tarifa excluída com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            if (tarifa == null)
+            {
+                return NotFound($"Não há tarifa cadastrada com o id {id}.");
+            }
 
-	[HttpPut]
-	[Route("Update")]
-	public async Task<ActionResult> UpdateTarifaAsync(TarifaUpdateDTO tarifaDTO)
-	{
-		try
-		{
-			await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
+            await tarifaRepository.DeleteTarifaAsync(id);
 
-			return Ok("Tarifa atualizada com sucesso.");
-		}
-		catch (Exception ex)
-		{
-			return BadRequest(ex.Message);
-		}
-	}
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPut]
+    [Route("Update/{id}")]
+    public async Task<ActionResult> UpdateTarifaAsync(int id, TarifaUpdateDTO tarifaDTO)
+    {
+        try
+        {
+            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
+
+            if (tarifa == null)
+            {
+                return NotFound($"Não há tarifa cadastrada com o id {id}.");
+            }
+
+            tarifaDTO.Id = id;
+
+            await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
 }
