@@ -14,4 +14,6 @@ public interface IClienteRepository
     Task UpdateClienteAsync(ClienteUpdateDTO clienteDTO);
 
     Task DeleteClienteAsync(int id);
+
+    Task<bool> ClienteExists(int id);
 }

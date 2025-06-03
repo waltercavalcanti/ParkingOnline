@@ -45,9 +45,9 @@ public class VagaController(IVagaRepository vagaRepository) : ControllerBase
     {
         try
         {
-            var vaga = await vagaRepository.GetVagaByIdAsync(id);
+            var vagaExists = await vagaRepository.VagaExists(id);
 
-            if (vaga == null)
+            if (!vagaExists)
             {
                 return NotFound($"Não há vaga cadastrada com o id {id}.");
             }
@@ -68,9 +68,9 @@ public class VagaController(IVagaRepository vagaRepository) : ControllerBase
     {
         try
         {
-            var vaga = await vagaRepository.GetVagaByIdAsync(id);
+            var vagaExists = await vagaRepository.VagaExists(id);
 
-            if (vaga == null)
+            if (!vagaExists)
             {
                 return NotFound($"Não há vaga cadastrada com o id {id}.");
             }

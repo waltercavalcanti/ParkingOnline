@@ -14,4 +14,6 @@ public interface IVagaRepository
     Task UpdateVagaAsync(VagaUpdateDTO vagaDTO);
 
     Task DeleteVagaAsync(int id);
+
+    Task<bool> VagaExists(int id);
 }

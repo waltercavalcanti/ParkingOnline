@@ -79,4 +79,11 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
         await conexao.ExecuteAsync(query, parameters);
     }
+
+    public async Task<bool> VagaExists(int id)
+    {
+        var vaga = await GetVagaByIdAsync(id);
+
+        return vaga != null;
+    }
 }

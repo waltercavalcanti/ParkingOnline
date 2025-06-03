@@ -45,9 +45,9 @@ public class ClienteController(IClienteRepository clienteRepository) : Controlle
     {
         try
         {
-            var cliente = await clienteRepository.GetClienteByIdAsync(id);
+            var clienteExists = await clienteRepository.ClienteExists(id);
 
-            if (cliente == null)
+            if (!clienteExists)
             {
                 return NotFound($"Não há cliente cadastrado com o id {id}.");
             }
@@ -68,9 +68,9 @@ public class ClienteController(IClienteRepository clienteRepository) : Controlle
     {
         try
         {
-            var cliente = await clienteRepository.GetClienteByIdAsync(id);
+            var clienteExists = await clienteRepository.ClienteExists(id);
 
-            if (cliente == null)
+            if (!clienteExists)
             {
                 return NotFound($"Não há cliente cadastrado com o id {id}.");
             }

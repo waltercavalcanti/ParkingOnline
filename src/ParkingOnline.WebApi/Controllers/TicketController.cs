@@ -6,7 +6,7 @@ namespace ParkingOnline.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TicketController(ITicketRepository ticketRepository) : ControllerBase
+public class TicketController(ITicketRepository ticketRepository, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) : ControllerBase
 {
     [HttpGet]
     [Route("GetAll")]
@@ -34,6 +34,32 @@ public class TicketController(ITicketRepository ticketRepository) : ControllerBa
     [Route("Add")]
     public async Task<ActionResult> AddTicketAsync(TicketAddDTO ticketDTO)
     {
+        var veiculoExists = await veiculoRepository.VeiculoExists(ticketDTO.VeiculoId);
+
+        if (!veiculoExists)
+        {
+            return NotFound($"Não há veículo cadastrado com o id {ticketDTO.VeiculoId}.");
+        }
+
+        var vaga = await vagaRepository.GetVagaByIdAsync(ticketDTO.VagaId);
+
+        if (vaga == null)
+        {
+            return NotFound($"Não há vaga cadastrada com o id {ticketDTO.VagaId}.");
+        }
+
+        if (vaga.Ocupada)
+        {
+            return BadRequest($"A vaga com o id {vaga.Id} já está ocupada.");
+        }
+
+        await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
+        {
+            Id = vaga.Id,
+            Localizacao = vaga.Localizacao,
+            Ocupada = true
+        });
+
         var ticket = await ticketRepository.AddTicketAsync(ticketDTO);
 
         return CreatedAtAction("GetTicketById", new { id = ticket.Id }, ticket);
@@ -45,9 +71,9 @@ public class TicketController(ITicketRepository ticketRepository) : ControllerBa
     {
         try
         {
-            var ticket = await ticketRepository.GetTicketByIdAsync(id);
+            var ticketExists = await ticketRepository.TicketExists(id);
 
-            if (ticket == null)
+            if (!ticketExists)
             {
                 return NotFound($"Não há ticket cadastrado com o id {id}.");
             }
@@ -74,6 +100,15 @@ public class TicketController(ITicketRepository ticketRepository) : ControllerBa
             {
                 return NotFound($"Não há ticket cadastrado com o id {id}.");
             }
+
+            var vaga = await vagaRepository.GetVagaByIdAsync(ticket.VagaId);
+
+            await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
+            {
+                Id = vaga.Id,
+                Localizacao = vaga.Localizacao,
+                Ocupada = false
+            });
 
             ticketDTO.Id = id;
 

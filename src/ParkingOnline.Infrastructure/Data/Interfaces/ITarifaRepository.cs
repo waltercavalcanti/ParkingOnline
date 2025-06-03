@@ -9,9 +9,13 @@ public interface ITarifaRepository
 
     Task<IEnumerable<Tarifa>> GetAllTarifasAsync();
 
+    Task<Tarifa> GetTarifaAtualAsync();
+
     Task<Tarifa> AddTarifaAsync(TarifaAddDTO tarifaDTO);
 
     Task UpdateTarifaAsync(TarifaUpdateDTO tarifaDTO);
 
     Task DeleteTarifaAsync(int id);
+
+    Task<bool> TarifaExists(int id);
 }

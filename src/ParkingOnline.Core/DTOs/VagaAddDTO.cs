@@ -2,7 +2,7 @@
 
 public class VagaAddDTO
 {
-	public string Localizacao { get; set; }
+    public required string Localizacao { get; set; }
 
-	public bool Ocupada { get; set; }
+    public bool Ocupada { get; set; }
 }

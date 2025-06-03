@@ -50,6 +50,13 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
         return tarifas.ToList();
     }
 
+    public async Task<Tarifa> GetTarifaAtualAsync()
+    {
+        var tarifas = await GetAllTarifasAsync();
+
+        return tarifas.OrderByDescending(tarifa => tarifa.Id).FirstOrDefault();
+    }
+
     public async Task<Tarifa> GetTarifaByIdAsync(int id)
     {
         using var conexao = GetConexao();
@@ -78,5 +85,12 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
         };
 
         await conexao.ExecuteAsync(query, parameters);
+    }
+
+    public async Task<bool> TarifaExists(int id)
+    {
+        var tarifa = await GetTarifaByIdAsync(id);
+
+        return tarifa != null;
     }
 }

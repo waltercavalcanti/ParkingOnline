@@ -2,17 +2,17 @@
 
 public class Ticket : BaseEntity<int>
 {
-	public DateTime DataEntrada { get; set; }
+    public DateTime DataEntrada { get; set; }
 
-	public DateTime DataSaida { get; set; }
+    public DateTime? DataSaida { get; set; }
 
-	public decimal Valor { get; set; }
+    public decimal? Valor { get; set; }
 
-	public int VeiculoId { get; set; }
+    public int VeiculoId { get; set; }
 
-	public Veiculo Veiculo { get; set; }
+    public Veiculo Veiculo { get; set; }
 
-	public int VagaId { get; set; }
+    public int VagaId { get; set; }
 
-	public Vaga Vaga { get; set; }
+    public Vaga Vaga { get; set; }
 }

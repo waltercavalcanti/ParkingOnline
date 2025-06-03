@@ -79,4 +79,11 @@ public class ClienteRepository(IConfiguration configuration) : IClienteRepositor
 
         await conexao.ExecuteAsync(query, parameters);
     }
+
+    public async Task<bool> ClienteExists(int id)
+    {
+        var cliente = await GetClienteByIdAsync(id);
+
+        return cliente != null;
+    }
 }

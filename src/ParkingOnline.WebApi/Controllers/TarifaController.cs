@@ -45,9 +45,9 @@ public class TarifaController(ITarifaRepository tarifaRepository) : ControllerBa
     {
         try
         {
-            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
+            var tarifaExists = await tarifaRepository.TarifaExists(id);
 
-            if (tarifa == null)
+            if (!tarifaExists)
             {
                 return NotFound($"Não há tarifa cadastrada com o id {id}.");
             }
@@ -68,9 +68,9 @@ public class TarifaController(ITarifaRepository tarifaRepository) : ControllerBa
     {
         try
         {
-            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
+            var tarifaExists = await tarifaRepository.TarifaExists(id);
 
-            if (tarifa == null)
+            if (!tarifaExists)
             {
                 return NotFound($"Não há tarifa cadastrada com o id {id}.");
             }

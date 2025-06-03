@@ -6,7 +6,7 @@ namespace ParkingOnline.WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class VeiculoController(IVeiculoRepository veiculoRepository) : ControllerBase
+public class VeiculoController(IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) : ControllerBase
 {
     [HttpGet]
     [Route("GetAll")]
@@ -34,6 +34,13 @@ public class VeiculoController(IVeiculoRepository veiculoRepository) : Controlle
     [Route("Add")]
     public async Task<ActionResult> AddVeiculoAsync(VeiculoAddDTO veiculoDTO)
     {
+        var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
+
+        if (!clienteExists)
+        {
+            return NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
+        }
+
         var veiculo = await veiculoRepository.AddVeiculoAsync(veiculoDTO);
 
         return CreatedAtAction("GetVeiculoById", new { id = veiculo.Id }, veiculo);
@@ -45,9 +52,9 @@ public class VeiculoController(IVeiculoRepository veiculoRepository) : Controlle
     {
         try
         {
-            var veiculo = await veiculoRepository.GetVeiculoByIdAsync(id);
+            var veiculoExists = await veiculoRepository.VeiculoExists(id);
 
-            if (veiculo == null)
+            if (!veiculoExists)
             {
                 return NotFound($"Não há veículo cadastrado com o id {id}.");
             }
@@ -68,11 +75,18 @@ public class VeiculoController(IVeiculoRepository veiculoRepository) : Controlle
     {
         try
         {
-            var veiculo = await veiculoRepository.GetVeiculoByIdAsync(id);
+            var veiculoExists = await veiculoRepository.VeiculoExists(id);
 
-            if (veiculo == null)
+            if (!veiculoExists)
             {
                 return NotFound($"Não há veículo cadastrado com o id {id}.");
+            }
+
+            var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
+
+            if (!clienteExists)
+            {
+                return NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
             }
 
             veiculoDTO.Id = id;

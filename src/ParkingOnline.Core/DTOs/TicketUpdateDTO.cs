@@ -1,6 +1,6 @@
 ﻿namespace ParkingOnline.Core.DTOs;
 
-public class TicketUpdateDTO : TicketAddDTO
+public class TicketUpdateDTO
 {
-	public int Id { get; set; }
+    public int Id { get; set; }
 }

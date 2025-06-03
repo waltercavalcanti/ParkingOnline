@@ -83,4 +83,11 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
         await conexao.ExecuteAsync(query, parameters);
     }
+
+    public async Task<bool> VeiculoExists(int id)
+    {
+        var veiculo = await GetVeiculoByIdAsync(id);
+
+        return veiculo != null;
+    }
 }

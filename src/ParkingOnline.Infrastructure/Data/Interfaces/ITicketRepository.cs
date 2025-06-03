@@ -14,4 +14,6 @@ public interface ITicketRepository
     Task UpdateTicketAsync(TicketUpdateDTO ticketDTO);
 
     Task DeleteTicketAsync(int id);
+
+    Task<bool> TicketExists(int id);
 }

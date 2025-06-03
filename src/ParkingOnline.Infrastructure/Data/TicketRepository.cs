@@ -15,12 +15,10 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
     {
         using var conexao = GetConexao();
 
-        var query = "INSERT INTO Ticket (DataEntrada, DataSaida, Valor, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @DataSaida, @Valor, @VeiculoId, @VagaId)";
+        var query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
         var parameters = new
         {
-            ticketDTO.DataEntrada,
-            ticketDTO.DataSaida,
-            ticketDTO.Valor,
+            DataEntrada = DateTime.Now,
             ticketDTO.VeiculoId,
             ticketDTO.VagaId
         };
@@ -72,17 +70,33 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
     {
         using var conexao = GetConexao();
 
-        var query = "UPDATE Ticket SET DataEntrada = @DataEntrada, DataSaida = @DataSaida, Valor = @Valor, VeiculoId = @VeiculoId, VagaId = @VagaId WHERE Id = @Id";
+        var dataEntrada = (await GetTicketByIdAsync(ticketDTO.Id)).DataEntrada;
+        var dataSaida = DateTime.Now;
+        var tarifa = await new TarifaRepository(configuration).GetTarifaAtualAsync();
+
+        var query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
         var parameters = new
         {
             ticketDTO.Id,
-            ticketDTO.DataEntrada,
-            ticketDTO.DataSaida,
-            ticketDTO.Valor,
-            ticketDTO.VeiculoId,
-            ticketDTO.VagaId
+            DataSaida = dataSaida,
+            Valor = CalcularValor(dataEntrada, dataSaida, tarifa)
         };
 
         await conexao.ExecuteAsync(query, parameters);
+    }
+
+    private static decimal CalcularValor(DateTime dataEntrada, DateTime dataSaida, Tarifa tarifa)
+    {
+        var diferenca = dataSaida - dataEntrada;
+        var qtdeHoras = (int)Math.Ceiling(diferenca.TotalHours);
+
+        return tarifa.ValorInicial + (tarifa.ValorPorHora * qtdeHoras);
+    }
+
+    public async Task<bool> TicketExists(int id)
+    {
+        var ticket = await GetTicketByIdAsync(id);
+
+        return ticket != null;
     }
 }

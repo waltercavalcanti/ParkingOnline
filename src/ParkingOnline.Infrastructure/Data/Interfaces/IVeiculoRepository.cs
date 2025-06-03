@@ -14,4 +14,6 @@ public interface IVeiculoRepository
     Task UpdateVeiculoAsync(VeiculoUpdateDTO veiculoDTO);
 
     Task DeleteVeiculoAsync(int id);
+
+    Task<bool> VeiculoExists(int id);
 }
