@@ -43,27 +43,66 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
 
     public async Task<IEnumerable<Ticket>> GetAllTicketsAsync()
     {
-        using var conexao = GetConexao();
+        var query = GetTicketSqlQuery();
 
-        var query = "SELECT * FROM Ticket";
-        var tickets = await conexao.QueryAsync<Ticket>(query);
+        var tickets = await QueryTicketsAsync(query);
 
-        return tickets.ToList();
+        return tickets;
     }
 
     public async Task<Ticket> GetTicketByIdAsync(int id)
     {
-        using var conexao = GetConexao();
+        var query = GetTicketSqlQuery(true);
 
-        var query = "SELECT * FROM Ticket WHERE Id = @Id";
         var parameter = new
         {
             Id = id
         };
 
-        var ticket = await conexao.QueryFirstOrDefaultAsync<Ticket>(query, parameter);
+        var tickets = await QueryTicketsAsync(query, parameter);
 
-        return ticket;
+        return tickets.FirstOrDefault();
+    }
+
+    private static string GetTicketSqlQuery(bool filtraPorId = false)
+    {
+        var query = @"SELECT T.*, VE.*, C.*, VA.*
+                      FROM Ticket T
+                      JOIN Veiculo VE ON VE.Id = T.VeiculoId
+                      JOIN Cliente C ON C.Id = VE.ClienteId
+                      JOIN Vaga VA ON VA.Id = T.VagaId
+                      WHERE T.Id = @Id";
+
+        return filtraPorId ? query : query.Replace("WHERE T.Id = @Id", string.Empty);
+    }
+
+    private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
+    {
+        using var conexao = GetConexao();
+
+        var ticketDictionary = new Dictionary<int, Ticket>();
+
+        var veiculo = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
+            (query, (ticket, veiculo, cliente, vaga) =>
+            {
+                if (!ticketDictionary.TryGetValue(ticket.Id, out var currentTicket))
+                {
+                    currentTicket = ticket;
+                    currentTicket.Veiculo = veiculo;
+                    currentTicket.Veiculo.Cliente = cliente;
+                    currentTicket.Vaga = vaga;
+                    ticketDictionary.Add(currentTicket.Id, currentTicket);
+                }
+                else
+                {
+                    currentTicket.Veiculo = veiculo;
+                    currentTicket.Veiculo.Cliente = cliente;
+                    currentTicket.Vaga = vaga;
+                }
+                return currentTicket;
+            }, parameters);
+
+        return ticketDictionary.Values;
     }
 
     public async Task UpdateTicketAsync(TicketUpdateDTO ticketDTO)

@@ -44,27 +44,60 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
     public async Task<IEnumerable<Veiculo>> GetAllVeiculosAsync()
     {
-        using var conexao = GetConexao();
+        var query = GetVeiculoSqlQuery();
 
-        var query = "SELECT * FROM Veiculo";
-        var veiculos = await conexao.QueryAsync<Veiculo>(query);
+        var veiculos = await QueryVeiculosAsync(query);
 
-        return veiculos.ToList();
+        return veiculos;
     }
 
     public async Task<Veiculo> GetVeiculoByIdAsync(int id)
     {
-        using var conexao = GetConexao();
+        var query = GetVeiculoSqlQuery(true);
 
-        var query = "SELECT * FROM Veiculo WHERE Id = @Id";
         var parameter = new
         {
             Id = id
         };
 
-        var veiculo = await conexao.QueryFirstOrDefaultAsync<Veiculo>(query, parameter);
+        var veiculos = await QueryVeiculosAsync(query, parameter);
 
-        return veiculo;
+        return veiculos.FirstOrDefault();
+    }
+
+    private static string GetVeiculoSqlQuery(bool filtraPorId = false)
+    {
+        var query = @"SELECT V.*, C.*
+                      FROM Veiculo V
+                      JOIN Cliente C ON C.Id = V.ClienteId
+                      WHERE V.Id = @Id";
+
+        return filtraPorId ? query : query.Replace("WHERE V.Id = @Id", string.Empty);
+    }
+
+    private async Task<IEnumerable<Veiculo>> QueryVeiculosAsync(string query, object? parameters = null)
+    {
+        using var conexao = GetConexao();
+
+        var veiculoDictionary = new Dictionary<int, Veiculo>();
+
+        var veiculo = await conexao.QueryAsync<Veiculo, Cliente, Veiculo>
+            (query, (veiculo, cliente) =>
+            {
+                if (!veiculoDictionary.TryGetValue(veiculo.Id, out var currentVeiculo))
+                {
+                    currentVeiculo = veiculo;
+                    currentVeiculo.Cliente = cliente;
+                    veiculoDictionary.Add(currentVeiculo.Id, currentVeiculo);
+                }
+                else
+                {
+                    currentVeiculo.Cliente = cliente;
+                }
+                return currentVeiculo;
+            }, parameters);
+
+        return veiculoDictionary.Values;
     }
 
     public async Task UpdateVeiculoAsync(VeiculoUpdateDTO veiculoDTO)
