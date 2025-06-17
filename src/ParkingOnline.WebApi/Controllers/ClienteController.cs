@@ -14,9 +14,7 @@ public class ClienteController(IClienteRepository clienteRepository) : Controlle
     {
         var clientes = await clienteRepository.GetAllClientesAsync();
 
-        return clientes == null || !clientes.Any()
-            ? NotFound("Não há clientes cadastrados.")
-            : Ok(clientes);
+        return Ok(clientes);
     }
 
     [HttpGet]

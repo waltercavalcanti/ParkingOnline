@@ -1,0 +1,28 @@
+﻿@model VagaModel
+
+@{
+    ViewData["Title"] = "Vaga - Detalhes";
+}
+
+<h1>Vaga - Detalhes</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Localizacao)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Localizacao)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Ocupada)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ocupada)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-outline-primary btn-sm" })
+</div>

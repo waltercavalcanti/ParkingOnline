@@ -14,9 +14,7 @@ public class VeiculoController(IVeiculoRepository veiculoRepository, IClienteRep
     {
         var veiculos = await veiculoRepository.GetAllVeiculosAsync();
 
-        return veiculos == null || !veiculos.Any()
-            ? NotFound("Não há veículos cadastrados.")
-            : Ok(veiculos);
+        return Ok(veiculos);
     }
 
     [HttpGet]

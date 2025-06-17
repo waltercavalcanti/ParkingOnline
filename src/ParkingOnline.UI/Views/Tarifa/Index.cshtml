@@ -1,0 +1,43 @@
+﻿@model IEnumerable<TarifaModel>
+
+@{
+    ViewData["Title"] = "Tarifas";
+}
+
+<h1>Tarifas</h1>
+
+<hr />
+<p>
+    <a class="btn btn-outline-primary btn-sm" asp-action="Create">Criar</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorInicial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ValorPorHora)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorInicial)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ValorPorHora)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" }) |
+                    @Html.ActionLink("Detalhes", "Details", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" }) |
+                    @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

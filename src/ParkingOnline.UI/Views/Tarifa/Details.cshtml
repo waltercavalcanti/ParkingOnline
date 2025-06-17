@@ -1,0 +1,28 @@
+﻿@model TarifaModel
+
+@{
+    ViewData["Title"] = "Tarifa - Detalhes";
+}
+
+<h1>Tarifa - Detalhes</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ValorInicial)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ValorInicial)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ValorPorHora)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ValorPorHora)
+        </dd>
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-outline-primary btn-sm" })
+</div>

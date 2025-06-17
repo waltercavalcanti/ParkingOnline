@@ -14,9 +14,7 @@ public class TicketController(ITicketRepository ticketRepository, IVeiculoReposi
     {
         var tickets = await ticketRepository.GetAllTicketsAsync();
 
-        return tickets == null || !tickets.Any()
-            ? NotFound("Não há tickets cadastrados.")
-            : Ok(tickets);
+        return Ok(tickets);
     }
 
     [HttpGet]

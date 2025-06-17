@@ -14,9 +14,7 @@ public class TarifaController(ITarifaRepository tarifaRepository) : ControllerBa
     {
         var tarifas = await tarifaRepository.GetAllTarifasAsync();
 
-        return tarifas == null || !tarifas.Any()
-            ? NotFound("Não há tarifas cadastradas.")
-            : Ok(tarifas);
+        return Ok(tarifas);
     }
 
     [HttpGet]

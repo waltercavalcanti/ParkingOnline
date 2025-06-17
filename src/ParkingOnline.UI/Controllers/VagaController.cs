@@ -1,0 +1,89 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using ParkingOnline.UI.Models;
+using ParkingOnline.UI.Services.Interfaces;
+
+namespace ParkingOnline.UI.Controllers;
+
+public class VagaController(IVagaService vagaService) : Controller
+{
+    public IActionResult Index()
+    {
+        var vagas = vagaService.GetAllVagasAsync().Result;
+
+        return View(vagas);
+    }
+
+    public IActionResult Details(int id)
+    {
+        var vaga = vagaService.GetVagaByIdAsync(id).Result;
+
+        return View(vaga);
+    }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Create(VagaModel vagaModel)
+    {
+        try
+        {
+            vagaService.AddVagaAsync(vagaModel).Wait();
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch
+        {
+            return View();
+        }
+    }
+
+    public IActionResult Edit(int id)
+    {
+        var vaga = vagaService.GetVagaByIdAsync(id).Result;
+
+        return View(vaga);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Edit(int id, VagaModel vagaModel)
+    {
+        try
+        {
+            vagaService.UpdateVagaAsync(id, vagaModel).Wait();
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch
+        {
+            return View();
+        }
+    }
+
+    public IActionResult Delete(int id)
+    {
+        var vaga = vagaService.GetVagaByIdAsync(id).Result;
+
+        return View(vaga);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Delete(int id, VagaModel vagaModel)
+    {
+        try
+        {
+            vagaService.DeleteVagaAsync(id).Wait();
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch
+        {
+            return View();
+        }
+    }
+}

@@ -14,9 +14,7 @@ public class VagaController(IVagaRepository vagaRepository) : ControllerBase
     {
         var vagas = await vagaRepository.GetAllVagasAsync();
 
-        return vagas == null || !vagas.Any()
-            ? NotFound("Não há vagas cadastradas.")
-            : Ok(vagas);
+        return Ok(vagas);
     }
 
     [HttpGet]

@@ -1,0 +1,30 @@
+﻿@model TarifaModel
+
+@{
+    ViewData["Title"] = "Tarifa - Excluir";
+}
+
+<h1>Tarifa - Excluir</h1>
+
+<h3>Tem certeza de que deseja excluir?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ValorInicial)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ValorInicial)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ValorPorHora)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ValorPorHora)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="submit" value="Excluir" class="btn btn-outline-danger btn-sm" />
+    </form>
+</div>
