@@ -13,13 +13,6 @@ public class TarifaController(ITarifaService tarifaService) : Controller
         return View(tarifas);
     }
 
-    public IActionResult Details(int id)
-    {
-        var tarifa = tarifaService.GetTarifaByIdAsync(id).Result;
-
-        return View(tarifa);
-    }
-
     public IActionResult Create()
     {
         return View();
@@ -64,16 +57,9 @@ public class TarifaController(ITarifaService tarifaService) : Controller
         }
     }
 
-    public IActionResult Delete(int id)
-    {
-        var tarifa = tarifaService.GetTarifaByIdAsync(id).Result;
-
-        return View(tarifa);
-    }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id, TarifaModel tarifaModel)
+    public IActionResult Delete(int id)
     {
         try
         {

@@ -9,11 +9,6 @@ public class TicketController : Controller
         return View();
     }
 
-    public IActionResult Details(int id)
-    {
-        return View();
-    }
-
     public IActionResult Create()
     {
         return View();
@@ -50,11 +45,6 @@ public class TicketController : Controller
         {
             return View();
         }
-    }
-
-    public IActionResult Delete(int id)
-    {
-        return View();
     }
 
     [HttpPost]

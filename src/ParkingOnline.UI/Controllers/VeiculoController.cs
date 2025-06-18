@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParkingOnline.UI.Models;
+using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class VeiculoController : Controller
+public class VeiculoController(IVeiculoService veiculoService) : Controller
 {
     public IActionResult Index()
     {
-        return View();
-    }
+        var veiculos = veiculoService.GetAllVeiculosAsync().Result;
 
-    public IActionResult Details(int id)
-    {
-        return View();
+        return View(veiculos);
     }
 
     public IActionResult Create()
@@ -21,10 +20,12 @@ public class VeiculoController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(IFormCollection collection)
+    public IActionResult Create(VeiculoModel veiculoModel)
     {
         try
         {
+            veiculoService.AddVeiculoAsync(veiculoModel).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -35,15 +36,19 @@ public class VeiculoController : Controller
 
     public IActionResult Edit(int id)
     {
-        return View();
+        var veiculo = veiculoService.GetVeiculoByIdAsync(id).Result;
+
+        return View(veiculo);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, IFormCollection collection)
+    public IActionResult Edit(int id, VeiculoModel veiculoModel)
     {
         try
         {
+            veiculoService.UpdateVeiculoAsync(id, veiculoModel).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -52,17 +57,14 @@ public class VeiculoController : Controller
         }
     }
 
-    public IActionResult Delete(int id)
-    {
-        return View();
-    }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id, IFormCollection collection)
+    public IActionResult Delete(int id)
     {
         try
         {
+            veiculoService.DeleteVeiculoAsync(id).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch

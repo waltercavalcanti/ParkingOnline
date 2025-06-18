@@ -13,13 +13,6 @@ public class ClienteController(IClienteService clienteService) : Controller
         return View(clientes);
     }
 
-    public IActionResult Details(int id)
-    {
-        var cliente = clienteService.GetClienteByIdAsync(id).Result;
-
-        return View(cliente);
-    }
-
     public IActionResult Create()
     {
         return View();
@@ -64,16 +57,9 @@ public class ClienteController(IClienteService clienteService) : Controller
         }
     }
 
-    public IActionResult Delete(int id)
-    {
-        var cliente = clienteService.GetClienteByIdAsync(id).Result;
-
-        return View(cliente);
-    }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id, ClienteModel clienteModel)
+    public IActionResult Delete(int id)
     {
         try
         {

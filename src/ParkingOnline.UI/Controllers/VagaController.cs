@@ -13,13 +13,6 @@ public class VagaController(IVagaService vagaService) : Controller
         return View(vagas);
     }
 
-    public IActionResult Details(int id)
-    {
-        var vaga = vagaService.GetVagaByIdAsync(id).Result;
-
-        return View(vaga);
-    }
-
     public IActionResult Create()
     {
         return View();
@@ -64,16 +57,9 @@ public class VagaController(IVagaService vagaService) : Controller
         }
     }
 
-    public IActionResult Delete(int id)
-    {
-        var vaga = vagaService.GetVagaByIdAsync(id).Result;
-
-        return View(vaga);
-    }
-
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id, VagaModel vagaModel)
+    public IActionResult Delete(int id)
     {
         try
         {

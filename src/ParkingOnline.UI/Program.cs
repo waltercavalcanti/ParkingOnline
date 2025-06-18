@@ -8,6 +8,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<ITarifaService, TarifaService>();
 builder.Services.AddScoped<IVagaService, VagaService>();
 builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IVeiculoService, VeiculoService>();
 
 var app = builder.Build();
 
