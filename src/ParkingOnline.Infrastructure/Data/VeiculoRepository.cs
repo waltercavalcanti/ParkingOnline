@@ -81,7 +81,7 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
         var veiculoDictionary = new Dictionary<int, Veiculo>();
 
-        var veiculo = await conexao.QueryAsync<Veiculo, Cliente, Veiculo>
+        var veiculos = await conexao.QueryAsync<Veiculo, Cliente, Veiculo>
             (query, (veiculo, cliente) =>
             {
                 if (!veiculoDictionary.TryGetValue(veiculo.Id, out var currentVeiculo))

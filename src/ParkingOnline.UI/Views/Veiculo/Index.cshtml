@@ -1,14 +1,12 @@
-﻿@model IEnumerable<ParkingOnline.UI.Models.VeiculoModel>
+﻿@model IEnumerable<VeiculoModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Veículos";
 }
 
-<h1>Index</h1>
+<h1>Veículos</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<hr />
 <table class="table">
     <thead>
         <tr>
@@ -22,38 +20,39 @@
                 @Html.DisplayNameFor(model => model.Placa)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ClienteId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.Cliente.Nome) | @Html.DisplayNameFor(model => model.Cliente.Telefone)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Marca)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Modelo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Placa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClienteId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Marca)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Modelo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Placa)
+                </td>
+                <td>
+                    @{
+                        var cliente = $"{item.Cliente.Nome} | {item.Cliente.Telefone}";
+                    }
+                    @Html.ActionLink(cliente, "Edit", "Cliente", new { id = item.ClienteId }, new { @class = "btn btn-outline-primary btn-sm" })
+                    @* @Html.DisplayFor(modelItem => item.Cliente.Nome) | @Html.DisplayFor(modelItem => item.Cliente.Telefone) *@
+                </td>
+                <td>
+                    <form asp-action="Delete">
+                        @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" }) |
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <input type="submit" value="Excluir" class="btn btn-outline-danger btn-sm" />
+                    </form>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

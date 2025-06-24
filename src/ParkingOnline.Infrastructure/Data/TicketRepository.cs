@@ -82,7 +82,7 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
 
         var ticketDictionary = new Dictionary<int, Ticket>();
 
-        var veiculo = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
+        var tickets = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
             (query, (ticket, veiculo, cliente, vaga) =>
             {
                 if (!ticketDictionary.TryGetValue(ticket.Id, out var currentTicket))

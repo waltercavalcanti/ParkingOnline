@@ -13,9 +13,11 @@ public class VeiculoController(IVeiculoService veiculoService) : Controller
         return View(veiculos);
     }
 
-    public IActionResult Create()
+    public IActionResult Create(int id)
     {
-        return View();
+        var veiculoModel = new VeiculoModel() { Placa = string.Empty, ClienteId = id };
+
+        return View(veiculoModel);
     }
 
     [HttpPost]
