@@ -4,7 +4,7 @@ using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class VeiculoController(IVeiculoService veiculoService) : Controller
+public class VeiculoController(IVeiculoService veiculoService, IClienteService clienteService) : Controller
 {
     public IActionResult Index()
     {
@@ -15,7 +15,19 @@ public class VeiculoController(IVeiculoService veiculoService) : Controller
 
     public IActionResult Create(int id)
     {
-        var veiculoModel = new VeiculoModel() { Placa = string.Empty, ClienteId = id };
+        var clienteModel = clienteService.GetClienteByIdAsync(id).Result;
+
+        if (string.IsNullOrWhiteSpace(clienteModel.Nome))
+        {
+            clienteModel.Nome = "Cliente não informou o nome.";
+        }
+
+        var veiculoModel = new VeiculoModel()
+        {
+            Placa = string.Empty,
+            ClienteId = id,
+            Cliente = clienteModel
+        };
 
         return View(veiculoModel);
     }

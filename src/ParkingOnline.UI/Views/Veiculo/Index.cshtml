@@ -40,10 +40,15 @@
                 </td>
                 <td>
                     @{
-                        var cliente = $"{item.Cliente.Nome} | {item.Cliente.Telefone}";
+                        var dadosCliente = item.Cliente.Telefone;
+
+                        if (!string.IsNullOrWhiteSpace(item.Cliente.Nome))
+                        {
+                            dadosCliente = $"{item.Cliente.Nome} | " + dadosCliente;
+                        }
+
                     }
-                    @Html.ActionLink(cliente, "Edit", "Cliente", new { id = item.ClienteId }, new { @class = "btn btn-outline-primary btn-sm" })
-                    @* @Html.DisplayFor(modelItem => item.Cliente.Nome) | @Html.DisplayFor(modelItem => item.Cliente.Telefone) *@
+                    @Html.ActionLink(dadosCliente, "Edit", "Cliente", new { id = item.ClienteId }, new { @class = "btn btn-outline-primary btn-sm" })
                 </td>
                 <td>
                     <form asp-action="Delete">

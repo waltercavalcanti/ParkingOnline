@@ -12,6 +12,13 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ClienteId" />
+            <br />
+            <div class="form-group">
+                <label asp-for="Cliente.Nome" class="control-label"></label>
+                <input asp-for="Cliente.Nome" class="form-control" readonly value="@Model.Cliente.Nome" />
+                <span asp-validation-for="Cliente.Nome" class="text-danger"></span>
+            </div>
+            <br />
             <div class="form-group">
                 <label asp-for="Marca" class="control-label"></label>
                 <input asp-for="Marca" class="form-control" />
