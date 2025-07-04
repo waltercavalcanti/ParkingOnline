@@ -50,6 +50,13 @@ public class VagaController(IVagaRepository vagaRepository) : ControllerBase
                 return NotFound($"Não há vaga cadastrada com o id {id}.");
             }
 
+            var vagaOcupada = await vagaRepository.VagaOcupada(id);
+
+            if (vagaOcupada)
+            {
+                return BadRequest("Não é possível deletar uma vaga que está ocupada.");
+            }
+
             await vagaRepository.DeleteVagaAsync(id);
 
             return NoContent();

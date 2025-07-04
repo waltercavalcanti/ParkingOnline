@@ -16,4 +16,6 @@ public interface IVagaRepository
     Task DeleteVagaAsync(int id);
 
     Task<bool> VagaExists(int id);
+
+    Task<bool> VagaOcupada(int id);
 }

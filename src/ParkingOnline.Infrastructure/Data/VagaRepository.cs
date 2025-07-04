@@ -86,4 +86,11 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
         return vaga != null;
     }
+
+    public async Task<bool> VagaOcupada(int id)
+    {
+        var vaga = await GetVagaByIdAsync(id);
+
+        return vaga.Ocupada;
+    }
 }
