@@ -52,6 +52,11 @@ public class VeiculoController(IVeiculoService veiculoService, IClienteService c
     {
         var veiculo = veiculoService.GetVeiculoByIdAsync(id).Result;
 
+        if (string.IsNullOrWhiteSpace(veiculo.Cliente.Nome))
+        {
+            veiculo.Cliente.Nome = "Cliente não informou o nome.";
+        }
+
         return View(veiculo);
     }
 
