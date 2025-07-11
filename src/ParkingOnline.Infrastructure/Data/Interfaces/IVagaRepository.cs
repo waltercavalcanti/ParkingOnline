@@ -9,6 +9,8 @@ public interface IVagaRepository
 
     Task<IEnumerable<Vaga>> GetAllVagasAsync();
 
+    Task<IEnumerable<Vaga>> GetVagasLivresAsync();
+
     Task<Vaga> AddVagaAsync(VagaAddDTO vagaDTO);
 
     Task UpdateVagaAsync(VagaUpdateDTO vagaDTO);

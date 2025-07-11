@@ -67,9 +67,10 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
     private static string GetVeiculoSqlQuery(bool filtraPorId = false)
     {
-        var query = @"SELECT V.*, C.*
+        var query = @"SELECT V.*, C.*, T.*
                       FROM Veiculo V
                       JOIN Cliente C ON C.Id = V.ClienteId
+                      LEFT JOIN Ticket T ON T.VeiculoId = V.Id
                       WHERE V.Id = @Id";
 
         return filtraPorId ? query : query.Replace("WHERE V.Id = @Id", string.Empty);
@@ -81,18 +82,24 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
         var veiculoDictionary = new Dictionary<int, Veiculo>();
 
-        var veiculos = await conexao.QueryAsync<Veiculo, Cliente, Veiculo>
-            (query, (veiculo, cliente) =>
+        var veiculos = await conexao.QueryAsync<Veiculo, Cliente, Ticket, Veiculo>
+            (query, (veiculo, cliente, ticket) =>
             {
                 if (!veiculoDictionary.TryGetValue(veiculo.Id, out var currentVeiculo))
                 {
                     currentVeiculo = veiculo;
+                    currentVeiculo.ClienteId = cliente.Id;
                     currentVeiculo.Cliente = cliente;
+                    currentVeiculo.TicketId = ticket?.Id;
+                    currentVeiculo.Ticket = ticket;
                     veiculoDictionary.Add(currentVeiculo.Id, currentVeiculo);
                 }
                 else
                 {
+                    currentVeiculo.ClienteId = cliente.Id;
                     currentVeiculo.Cliente = cliente;
+                    currentVeiculo.TicketId = ticket?.Id;
+                    currentVeiculo.Ticket = ticket;
                 }
                 return currentVeiculo;
             }, parameters);

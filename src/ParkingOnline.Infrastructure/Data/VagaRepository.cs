@@ -50,6 +50,16 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
         return vagas.ToList();
     }
 
+    public async Task<IEnumerable<Vaga>> GetVagasLivresAsync()
+    {
+        using var conexao = GetConexao();
+
+        var query = "SELECT * FROM Vaga WHERE Ocupada = 0";
+        var vagas = await conexao.QueryAsync<Vaga>(query);
+
+        return vagas.ToList();
+    }
+
     public async Task<Vaga> GetVagaByIdAsync(int id)
     {
         using var conexao = GetConexao();

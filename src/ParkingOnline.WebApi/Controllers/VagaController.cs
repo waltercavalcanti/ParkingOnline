@@ -18,6 +18,15 @@ public class VagaController(IVagaRepository vagaRepository) : ControllerBase
     }
 
     [HttpGet]
+    [Route("GetLivres")]
+    public async Task<ActionResult> GetVagasLivresAsync()
+    {
+        var vagas = await vagaRepository.GetVagasLivresAsync();
+
+        return Ok(vagas);
+    }
+
+    [HttpGet]
     [Route("GetById/{id}", Name = "GetVagaById")]
     public async Task<ActionResult> GetVagaByIdAsync(int id)
     {
