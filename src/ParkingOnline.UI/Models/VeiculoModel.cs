@@ -11,4 +11,8 @@ public class VeiculoModel : BaseModel<int>
     public int ClienteId { get; set; }
 
     public ClienteModel Cliente { get; set; }
+
+    public int? TicketId { get; set; }
+
+    public TicketModel? Ticket { get; set; }
 }
