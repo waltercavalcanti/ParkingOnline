@@ -22,6 +22,13 @@ public class VagaService(HttpClient httpClient) : IVagaService
         return vagas ?? [];
     }
 
+    public async Task<IEnumerable<VagaModel>> GetVagasLivresAsync()
+    {
+        var vagas = await httpClient.GetFromJsonAsync<List<VagaModel>>("Vaga/GetLivres");
+
+        return vagas ?? [];
+    }
+
     public async Task<VagaModel> GetVagaByIdAsync(int id)
     {
         var vaga = await httpClient.GetFromJsonAsync<VagaModel>($"Vaga/GetById/{id}");

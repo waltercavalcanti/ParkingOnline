@@ -8,6 +8,8 @@ public interface IVagaService
 
     Task<IEnumerable<VagaModel>> GetAllVagasAsync();
 
+    Task<IEnumerable<VagaModel>> GetVagasLivresAsync();
+
     Task AddVagaAsync(VagaModel vagaModel);
 
     Task UpdateVagaAsync(int id, VagaModel vagaModel);
