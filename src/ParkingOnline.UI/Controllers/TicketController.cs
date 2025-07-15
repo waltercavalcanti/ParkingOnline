@@ -1,25 +1,41 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ParkingOnline.UI.Models;
+using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class TicketController : Controller
+public class TicketController(ITicketService ticketService, IVeiculoService veiculoService, IVagaService vagaService) : Controller
 {
     public IActionResult Index()
     {
-        return View();
+        var tickets = ticketService.GetAllTicketsAsync().Result;
+
+        return View(tickets);
     }
 
-    public IActionResult Create()
+    public IActionResult Create(int id)
     {
-        return View();
+        var veiculoModel = veiculoService.GetVeiculoByIdAsync(id).Result;
+        var vagasModel = vagaService.GetVagasLivresAsync().Result;
+
+        var ticketModel = new TicketModel()
+        {
+            VeiculoId = id,
+            Veiculo = veiculoModel,
+            Vagas = vagasModel
+        };
+
+        return View(ticketModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(IFormCollection collection)
+    public IActionResult Create(TicketModel ticketModel)
     {
         try
         {
+            ticketService.AddTicketAsync(ticketModel).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -28,17 +44,16 @@ public class TicketController : Controller
         }
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public IActionResult Edit(int id)
     {
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, IFormCollection collection)
-    {
         try
         {
+            var ticket = ticketService.GetTicketByIdAsync(id).Result;
+
+            ticketService.UpdateTicketAsync(id, ticket).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch
@@ -49,10 +64,12 @@ public class TicketController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Delete(int id, IFormCollection collection)
+    public IActionResult Delete(int id)
     {
         try
         {
+            ticketService.DeleteTicketAsync(id).Wait();
+
             return RedirectToAction(nameof(Index));
         }
         catch
