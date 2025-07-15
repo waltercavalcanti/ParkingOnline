@@ -20,8 +20,9 @@
                 @Html.DisplayNameFor(model => model.Placa)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Cliente.Nome) | @Html.DisplayNameFor(model => model.Cliente.Telefone)
+                Cliente
             </th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
@@ -48,7 +49,20 @@
                         }
 
                     }
-                    @Html.ActionLink(dadosCliente, "Edit", "Cliente", new { id = item.ClienteId }, new { @class = "btn btn-outline-primary btn-sm" })
+                    @Html.ActionLink(dadosCliente, "Edit", "Cliente", new { id = item.ClienteId }, new { @class = "btn btn-outline-light btn-sm" })
+                </td>
+                <td>
+                    @if (item.Ticket == null || (item.Ticket != null && item.Ticket.DataSaida != null))
+                    {
+                        @Html.ActionLink("Estacionar", "Create", "Ticket", new { id = item.Id }, new { @class = "btn btn-outline-light btn-sm" })
+                    }
+                    else if (item.Ticket != null && item.Ticket.DataSaida == null)
+                    {
+                        <form asp-controller="Ticket" asp-action="Edit">
+                            <input type="hidden" name="id" value="@item.TicketId" />
+                            <input type="submit" value="Pagar" class="btn btn-outline-light btn-sm" />
+                        </form>
+                    }
                 </td>
                 <td>
                     @{
