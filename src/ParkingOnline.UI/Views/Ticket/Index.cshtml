@@ -1,0 +1,80 @@
+﻿@model IEnumerable<TicketModel>
+
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<h1>Tickets</h1>
+
+<hr />
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.VeiculoId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VagaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataEntrada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DataSaida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(item.Veiculo.Placa, "Edit", "Veiculo", new { id = item.Veiculo.Id }, new { @class = "btn btn-outline-light btn-sm" })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Vaga.Localizacao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataEntrada)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DataSaida)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Valor)
+                </td>
+                <td>
+                    @{
+                        var modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
+                    }
+                    <input type="button" value="Excluir" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#@modalConfirmarExclusao" />
+                    <div class="modal fade" id="@modalConfirmarExclusao" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+                         aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Excluir registro</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Confirma a exclusão do registro?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Não</button>
+                                    <form asp-action="Delete">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <input type="submit" value="Sim" class="btn btn-danger btn-sm" data-bs-dismiss="modal" />
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

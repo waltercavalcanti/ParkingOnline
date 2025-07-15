@@ -1,0 +1,44 @@
+﻿@model TicketModel
+
+@{
+    ViewData["Title"] = "Ticket - Estacionar";
+}
+
+<h1>Ticket - Estacionar</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="VeiculoId" />
+            <div class="form-group">
+                <label asp-for="Veiculo.Placa" class="control-label"></label>
+                <input asp-for="Veiculo.Placa" class="form-control" readonly value="@Model.Veiculo.Placa" />
+                <span asp-validation-for="Veiculo.Placa" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <label asp-for="VagaId" class="control-label"></label>
+                <select asp-for="VagaId" class="form-select">
+                    <option value="0">Selecione uma vaga</option>
+                    @foreach (var vaga in Model.Vagas)
+                    {
+                        <option value="@vaga.Id">@vaga.Localizacao</option>
+                    }
+                </select>
+                <span asp-validation-for="VagaId" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-outline-primary btn-sm" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
