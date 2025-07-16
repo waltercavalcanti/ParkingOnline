@@ -10,6 +10,7 @@ public class TicketModel : BaseModel<int>
     [Display(Name = "Data de Saída")]
     public DateTime? DataSaida { get; set; }
 
+    [DataType(DataType.Currency)]
     public decimal? Valor { get; set; }
 
     [Display(Name = "Veículo")]
