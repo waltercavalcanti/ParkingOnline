@@ -1,6 +1,16 @@
 USE [ParkingOnlineDB]
 GO
 
+ALTER TABLE [dbo].[Ticket] DROP CONSTRAINT [FK_Ticket_Veiculo]
+GO
+
+ALTER TABLE [dbo].[Ticket] DROP CONSTRAINT [FK_Ticket_Vaga]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Ticket]') AND type in (N'U'))
+DROP TABLE [dbo].[Ticket]
+GO
+
 SET ANSI_NULLS ON
 GO
 
@@ -30,6 +40,7 @@ GO
 
 ALTER TABLE [dbo].[Ticket]  WITH CHECK ADD  CONSTRAINT [FK_Ticket_Veiculo] FOREIGN KEY([VeiculoId])
 REFERENCES [dbo].[Veiculo] ([Id])
+ON DELETE CASCADE
 GO
 
 ALTER TABLE [dbo].[Ticket] CHECK CONSTRAINT [FK_Ticket_Veiculo]

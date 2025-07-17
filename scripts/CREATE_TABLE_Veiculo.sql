@@ -1,6 +1,13 @@
 USE [ParkingOnlineDB]
 GO
 
+ALTER TABLE [dbo].[Veiculo] DROP CONSTRAINT [FK_Veiculo_Cliente]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Veiculo]') AND type in (N'U'))
+DROP TABLE [dbo].[Veiculo]
+GO
+
 SET ANSI_NULLS ON
 GO
 
@@ -22,6 +29,7 @@ GO
 
 ALTER TABLE [dbo].[Veiculo]  WITH CHECK ADD  CONSTRAINT [FK_Veiculo_Cliente] FOREIGN KEY([ClienteId])
 REFERENCES [dbo].[Cliente] ([Id])
+ON DELETE CASCADE
 GO
 
 ALTER TABLE [dbo].[Veiculo] CHECK CONSTRAINT [FK_Veiculo_Cliente]
