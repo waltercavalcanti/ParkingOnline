@@ -6,9 +6,14 @@ namespace ParkingOnline.UI.Controllers;
 
 public class ClienteController(IClienteService clienteService) : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index(string filtro)
     {
         var clientes = clienteService.GetAllClientesAsync().Result;
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            clientes = clientes.Where(c => c.Nome.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
 
         return View(clientes);
     }

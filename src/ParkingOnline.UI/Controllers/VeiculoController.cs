@@ -6,9 +6,14 @@ namespace ParkingOnline.UI.Controllers;
 
 public class VeiculoController(IVeiculoService veiculoService, IClienteService clienteService) : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index(string filtro)
     {
         var veiculos = veiculoService.GetAllVeiculosAsync().Result;
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            veiculos = veiculos.Where(v => v.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
 
         return View(veiculos);
     }
