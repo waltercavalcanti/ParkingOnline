@@ -6,9 +6,14 @@ namespace ParkingOnline.UI.Controllers;
 
 public class TicketController(ITicketService ticketService, IVeiculoService veiculoService, IVagaService vagaService) : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index(string filtro)
     {
         var tickets = ticketService.GetAllTicketsAsync().Result;
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            tickets = tickets.Where(t => t.Veiculo.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
 
         return View(tickets);
     }

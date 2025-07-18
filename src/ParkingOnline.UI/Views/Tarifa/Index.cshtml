@@ -6,6 +6,12 @@
 
 <h1>Tarifas</h1>
 
+<div class="row">
+    <div class="col-md-6">
+        @Html.ActionLink("Cadastrar", "Create", "Tarifa", null, new { @class = "btn btn-outline-primary btn-sm" })
+    </div>
+    <div class="col-md-6"></div>
+</div>
 <hr />
 <table class="table">
     <thead>
@@ -61,6 +67,3 @@
         }
     </tbody>
 </table>
-<p>
-    @Html.ActionLink("Cadastrar", "Create", "Tarifa", null, new { @class = "btn btn-outline-primary btn-sm" })
-</p>

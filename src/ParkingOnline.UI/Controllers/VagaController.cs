@@ -6,9 +6,14 @@ namespace ParkingOnline.UI.Controllers;
 
 public class VagaController(IVagaService vagaService) : Controller
 {
-    public IActionResult Index()
+    public IActionResult Index(string filtro)
     {
         var vagas = vagaService.GetAllVagasAsync().Result;
+
+        if (!string.IsNullOrWhiteSpace(filtro))
+        {
+            vagas = vagas.Where(v => v.Localizacao.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
 
         return View(vagas);
     }
