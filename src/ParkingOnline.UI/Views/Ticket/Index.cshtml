@@ -10,7 +10,7 @@
     <div class="col-md-6"></div>
     <div class="col-md-6">
         <form asp-action="Index">
-            <div class="input-group" style="width: 50%; float: right;">
+            <div class="input-group filtro">
                 @Html.TextBox("Filtro", ViewData["FiltroAtual"] as string, new { @class = "form-control form-control-sm", @placeholder = "Filtrar por placa", @aria_label = "Filtrar por placa", @aria_describedby = "btn-filtrar" })
                 <input id="btn-filtrar" type="submit" value="Filtrar" class="btn btn-outline-secondary btn-sm" />
             </div>

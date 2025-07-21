@@ -10,7 +10,7 @@
     <div class="col-md-6"></div>
     <div class="col-md-6">
         <form asp-action="Index">
-            <div class="input-group" style="width: 50%; float: right;">
+            <div class="input-group filtro">
                 @Html.TextBox("Filtro", ViewData["FiltroAtual"] as string, new { @class = "form-control form-control-sm", @placeholder = "Filtrar por placa", @aria_label = "Filtrar por placa", @aria_describedby = "btn-filtrar" })
                 <input id="btn-filtrar" type="submit" value="Filtrar" class="btn btn-outline-secondary btn-sm" />
             </div>
@@ -69,10 +69,12 @@
                     }
                     else if (item.Ticket != null && item.Ticket.DataSaida == null)
                     {
-                        <form asp-controller="Ticket" asp-action="Edit">
+                        @* TODO: Colocar a funcionalidade de pagar na página de listagem de tickets *@
+                        @* <form asp-controller="Ticket" asp-action="Edit">
                             <input type="hidden" name="id" value="@item.TicketId" />
                             <input type="submit" value="Pagar" class="btn btn-outline-light btn-sm" />
-                        </form>
+                        </form> *@
+                        <span class="btn btn-outline-light btn-sm disabled">Estacionado</span>
                     }
                 </td>
                 <td>
