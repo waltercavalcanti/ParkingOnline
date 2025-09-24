@@ -4,18 +4,21 @@ using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class TicketController(ITicketService ticketService, IVeiculoService veiculoService, IVagaService vagaService) : Controller
+public class TicketController(ITicketService ticketService, IVeiculoService veiculoService, IVagaService vagaService) : BaseController
 {
-    public IActionResult Index(string filtro)
+    public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var tickets = ticketService.GetAllTicketsAsync().Result;
+        var tickets = ticketService.GetAllTicketsAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
-            tickets = tickets.Where(t => t.Veiculo.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+            tickets = tickets.Where(t => t.Veiculo.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        return View(tickets);
+        var listaPaginada = ListaPaginada<TicketModel>.Create(tickets, indicePagina, tamanhoPagina);
+        ViewData["FiltroAtual"] = filtro;
+        ViewData["TamanhoPagina"] = tamanhoPagina;
+        return View(listaPaginada);
     }
 
     public IActionResult Create(int id)

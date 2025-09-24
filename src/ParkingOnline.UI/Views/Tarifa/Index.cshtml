@@ -1,13 +1,16 @@
-﻿@model IEnumerable<TarifaModel>
+﻿@model ParkingOnline.UI.Models.ListaPaginada<TarifaModel>
 
 @{
     ViewData["Title"] = "Tarifas";
+    var tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
 }
 
 <h1>Tarifas</h1>
 
 <div class="row">
     <div class="col-md-6">
+        <input type="hidden" name="indicePagina" value="1" />
+        <input type="hidden" name="tamanhoPagina" value="@tamanhoPagina" />
         @Html.ActionLink("Cadastrar", "Create", "Tarifa", null, new { @class = "btn btn-outline-primary btn-sm" })
     </div>
     <div class="col-md-6"></div>
@@ -17,10 +20,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ValorInicial)
+                @Html.DisplayNameFor(model => model[0].ValorInicial)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ValorPorHora)
+                @Html.DisplayNameFor(model => model[0].ValorPorHora)
             </th>
             <th></th>
         </tr>
@@ -67,3 +70,41 @@
         }
     </tbody>
 </table>
+
+<nav aria-label="Navegação de página">
+    <ul class="pagination justify-content-center">
+        @if (Model.TemPaginaAnterior)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { indicePagina = Model.IndicePagina - 1, tamanhoPagina = tamanhoPagina })">Anterior</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        }
+        @for (int i = 1; i <= Model.TotalPaginas; i++)
+        {
+            if (i == Model.IndicePagina)
+            {
+                <li class="page-item active"><span class="page-link">@i</span></li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { indicePagina = i, tamanhoPagina = tamanhoPagina })">@i</a>
+                </li>
+            }
+        }
+        @if (Model.TemProximaPagina)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { indicePagina = Model.IndicePagina + 1, tamanhoPagina = tamanhoPagina })">Próxima</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+        }
+    </ul>
+</nav>

@@ -4,18 +4,21 @@ using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class ClienteController(IClienteService clienteService) : Controller
+public class ClienteController(IClienteService clienteService) : BaseController
 {
-    public IActionResult Index(string filtro)
+    public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var clientes = clienteService.GetAllClientesAsync().Result;
+        var clientes = clienteService.GetAllClientesAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
-            clientes = clientes.Where(c => c.Nome.Contains(filtro, StringComparison.OrdinalIgnoreCase)).ToList();
+            clientes = clientes.Where(c => c.Nome != null && c.Nome.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        return View(clientes);
+        var listaPaginada = ListaPaginada<ClienteModel>.Create(clientes, indicePagina, tamanhoPagina);
+        ViewData["FiltroAtual"] = filtro;
+        ViewData["TamanhoPagina"] = tamanhoPagina;
+        return View(listaPaginada);
     }
 
     public IActionResult Create()

@@ -1,7 +1,9 @@
-﻿@model IEnumerable<VagaModel>
+﻿@model ParkingOnline.UI.Models.ListaPaginada<VagaModel>
 
 @{
     ViewData["Title"] = "Vagas";
+    var filtroAtual = ViewData["FiltroAtual"] as string;
+    var tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
 }
 
 <h1>Vagas</h1>
@@ -11,9 +13,11 @@
         @Html.ActionLink("Cadastrar", "Create", "Vaga", null, new { @class = "btn btn-outline-primary btn-sm" })
     </div>
     <div class="col-md-6">
-        <form asp-action="Index">
+        <form asp-action="Index" method="get">
             <div class="input-group filtro">
-                @Html.TextBox("Filtro", ViewData["FiltroAtual"] as string, new { @class = "form-control form-control-sm", @placeholder = "Filtrar por localização", @aria_label = "Filtrar por localização", @aria_describedby = "btn-filtrar" })
+                @Html.TextBox("Filtro", filtroAtual, new { @class = "form-control form-control-sm", @placeholder = "Filtrar por localização", @aria_label = "Filtrar por localização", @aria_describedby = "btn-filtrar" })
+                <input type="hidden" name="indicePagina" value="1" />
+                <input type="hidden" name="tamanhoPagina" value="@tamanhoPagina" />
                 <input id="btn-filtrar" type="submit" value="Filtrar" class="btn btn-outline-secondary btn-sm" />
             </div>
         </form>
@@ -24,10 +28,10 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Localizacao)
+                @Html.DisplayNameFor(model => model[0].Localizacao)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Ocupada)
+                @Html.DisplayNameFor(model => model[0].Ocupada)
             </th>
             <th></th>
         </tr>
@@ -74,3 +78,41 @@
         }
     </tbody>
 </table>
+
+<nav aria-label="Navegação de página">
+    <ul class="pagination justify-content-center">
+        @if (Model.TemPaginaAnterior)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { filtro = filtroAtual, indicePagina = Model.IndicePagina - 1, tamanhoPagina = tamanhoPagina })">Anterior</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        }
+        @for (int i = 1; i <= Model.TotalPaginas; i++)
+        {
+            if (i == Model.IndicePagina)
+            {
+                <li class="page-item active"><span class="page-link">@i</span></li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { filtro = filtroAtual, indicePagina = i, tamanhoPagina = tamanhoPagina })">@i</a>
+                </li>
+            }
+        }
+        @if (Model.TemProximaPagina)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@Url.Action("Index", new { filtro = filtroAtual, indicePagina = Model.IndicePagina + 1, tamanhoPagina = tamanhoPagina })">Próxima</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Próxima</span></li>
+        }
+    </ul>
+</nav>

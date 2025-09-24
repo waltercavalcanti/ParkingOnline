@@ -4,13 +4,15 @@ using ParkingOnline.UI.Services.Interfaces;
 
 namespace ParkingOnline.UI.Controllers;
 
-public class TarifaController(ITarifaService tarifaService) : Controller
+public class TarifaController(ITarifaService tarifaService) : BaseController
 {
-    public IActionResult Index()
+    public IActionResult Index(int indicePagina = 1)
     {
-        var tarifas = tarifaService.GetAllTarifasAsync().Result;
+        var tarifas = tarifaService.GetAllTarifasAsync().Result.AsQueryable();
 
-        return View(tarifas);
+        var listaPaginada = ListaPaginada<TarifaModel>.Create(tarifas, indicePagina, tamanhoPagina);
+        ViewData["TamanhoPagina"] = tamanhoPagina;
+        return View(listaPaginada);
     }
 
     public IActionResult Create()
