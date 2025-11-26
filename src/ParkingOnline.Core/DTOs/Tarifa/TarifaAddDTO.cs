@@ -1,4 +1,4 @@
-﻿namespace ParkingOnline.Core.DTOs;
+﻿namespace ParkingOnline.Core.DTOs.Tarifa;
 
 public class TarifaAddDTO
 {

@@ -1,4 +1,4 @@
-﻿namespace ParkingOnline.Core.DTOs;
+﻿namespace ParkingOnline.Core.DTOs.Vaga;
 
 public class VagaUpdateDTO : VagaAddDTO
 {

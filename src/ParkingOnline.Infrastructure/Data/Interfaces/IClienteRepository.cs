@@ -1,4 +1,4 @@
-﻿using ParkingOnline.Core.DTOs;
+﻿using ParkingOnline.Core.DTOs.Cliente;
 using ParkingOnline.Core.Entities;
 
 namespace ParkingOnline.Infrastructure.Data.Interfaces;

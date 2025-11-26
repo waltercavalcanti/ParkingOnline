@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ParkingOnline.Core.DTOs;
+using ParkingOnline.Core.DTOs.Tarifa;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Controllers;
