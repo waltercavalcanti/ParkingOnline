@@ -10,7 +10,7 @@ public class ClienteEndpoints : ICarterModule
     {
         var group = app.MapGroup("/api/clientes").WithTags("Cliente");
         group.MapGet("GetAll", GetAllClientesAsync);
-        group.MapGet("GetById/{id}", GetClienteByIdAsync)/*.WithName("GetClienteById")*/;
+        group.MapGet("GetById/{id}", GetClienteByIdAsync).WithName("GetClienteById");
         group.MapPost("Add", AddClienteAsync);
         group.MapDelete("Delete/{id}", DeleteClienteAsync);
         group.MapPut("Update/{id}", UpdateClienteAsync);

@@ -11,7 +11,7 @@ public class TicketEndpoints : ICarterModule
     {
         var group = app.MapGroup("/api/tickets").WithTags("Ticket");
         group.MapGet("GetAll", GetAllTicketsAsync);
-        group.MapGet("GetById/{id}", GetTicketByIdAsync)/*.WithName("GetTicketById")*/;
+        group.MapGet("GetById/{id}", GetTicketByIdAsync).WithName("GetTicketById");
         group.MapPost("Add", AddTicketAsync);
         group.MapDelete("Delete/{id}", DeleteTicketAsync);
         group.MapPut("Update/{id}", UpdateTicketAsync);

@@ -11,7 +11,7 @@ public class VagaEndpoints : ICarterModule
         var group = app.MapGroup("/api/vagas").WithTags("Vaga");
         group.MapGet("GetAll", GetAllVagasAsync);
         group.MapGet("GetLivres", GetVagasLivresAsync);
-        group.MapGet("GetById/{id}", GetVagaByIdAsync)/*.WithName("GetVagaById")*/;
+        group.MapGet("GetById/{id}", GetVagaByIdAsync).WithName("GetVagaById");
         group.MapPost("Add", AddVagaAsync);
         group.MapDelete("Delete/{id}", DeleteVagaAsync);
         group.MapPut("Update/{id}", UpdateVagaAsync);

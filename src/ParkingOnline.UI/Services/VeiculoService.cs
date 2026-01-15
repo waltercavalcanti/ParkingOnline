@@ -7,24 +7,24 @@ public class VeiculoService(HttpClient httpClient) : IVeiculoService
 {
     public async Task AddVeiculoAsync(VeiculoModel veiculoModel)
     {
-        using var _ = await httpClient.PostAsJsonAsync("Veiculo/Add", veiculoModel);
+        using var _ = await httpClient.PostAsJsonAsync("veiculos/Add", veiculoModel);
     }
 
     public async Task DeleteVeiculoAsync(int id)
     {
-        using var _ = await httpClient.DeleteAsync($"Veiculo/Delete/{id}");
+        using var _ = await httpClient.DeleteAsync($"veiculos/Delete/{id}");
     }
 
     public async Task<IEnumerable<VeiculoModel>> GetAllVeiculosAsync()
     {
-        var veiculos = await httpClient.GetFromJsonAsync<List<VeiculoModel>>("Veiculo/GetAll");
+        var veiculos = await httpClient.GetFromJsonAsync<List<VeiculoModel>>("veiculos/GetAll");
 
         return veiculos ?? [];
     }
 
     public async Task<VeiculoModel> GetVeiculoByIdAsync(int id)
     {
-        var veiculo = await httpClient.GetFromJsonAsync<VeiculoModel>($"Veiculo/GetById/{id}");
+        var veiculo = await httpClient.GetFromJsonAsync<VeiculoModel>($"veiculos/GetById/{id}");
 
         if (veiculo is null)
         {
@@ -36,6 +36,6 @@ public class VeiculoService(HttpClient httpClient) : IVeiculoService
 
     public async Task UpdateVeiculoAsync(int id, VeiculoModel veiculoModel)
     {
-        using var _ = await httpClient.PutAsJsonAsync($"Veiculo/Update/{id}", veiculoModel);
+        using var _ = await httpClient.PutAsJsonAsync($"veiculos/Update/{id}", veiculoModel);
     }
 }

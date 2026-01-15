@@ -10,7 +10,7 @@ public class TarifaEndpoints : ICarterModule
     {
         var group = app.MapGroup("/api/tarifas").WithTags("Tarifa");
         group.MapGet("GetAll", GetAllTarifasAsync);
-        group.MapGet("GetById/{id}", GetTarifaByIdAsync)/*.WithName("GetTarifaById")*/;
+        group.MapGet("GetById/{id}", GetTarifaByIdAsync).WithName("GetTarifaById");
         group.MapPost("Add", AddTarifaAsync);
         group.MapDelete("Delete/{id}", DeleteTarifaAsync);
         group.MapPut("Update/{id}", UpdateTarifaAsync);

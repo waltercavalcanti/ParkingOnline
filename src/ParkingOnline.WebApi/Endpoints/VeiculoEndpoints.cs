@@ -10,7 +10,7 @@ public class VeiculoEndpoints : ICarterModule
     {
         var group = app.MapGroup("/api/veiculos").WithTags("Veiculo");
         group.MapGet("GetAll", GetAllVeiculosAsync);
-        group.MapGet("GetById/{id}", GetVeiculoByIdAsync)/*.WithName("GetVeiculoById")*/;
+        group.MapGet("GetById/{id}", GetVeiculoByIdAsync).WithName("GetVeiculoById");
         group.MapPost("Add", AddVeiculoAsync);
         group.MapDelete("Delete/{id}", DeleteVeiculoAsync);
         group.MapPut("Update/{id}", UpdateVeiculoAsync);

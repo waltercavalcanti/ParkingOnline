@@ -7,35 +7,35 @@ public class TarifaService(HttpClient httpClient) : ITarifaService
 {
     public async Task AddTarifaAsync(TarifaModel tarifaModel)
     {
-        using var _ = await httpClient.PostAsJsonAsync("Tarifa/Add", tarifaModel);
+        using var _ = await httpClient.PostAsJsonAsync("tarifas/Add", tarifaModel);
     }
 
     public async Task DeleteTarifaAsync(int id)
     {
-        using var _ = await httpClient.DeleteAsync($"Tarifa/Delete/{id}");
+        using var _ = await httpClient.DeleteAsync($"tarifas/Delete/{id}");
     }
 
     public async Task<IEnumerable<TarifaModel>> GetAllTarifasAsync()
     {
-        var Tarifas = await httpClient.GetFromJsonAsync<List<TarifaModel>>("Tarifa/GetAll");
+        var tarifas = await httpClient.GetFromJsonAsync<List<TarifaModel>>("tarifas/GetAll");
 
-        return Tarifas ?? [];
+        return tarifas ?? [];
     }
 
     public async Task<TarifaModel> GetTarifaByIdAsync(int id)
     {
-        var Tarifa = await httpClient.GetFromJsonAsync<TarifaModel>($"Tarifa/GetById/{id}");
+        var tarifa = await httpClient.GetFromJsonAsync<TarifaModel>($"tarifas/GetById/{id}");
 
-        if (Tarifa is null)
+        if (tarifa is null)
         {
             throw new KeyNotFoundException($"Tarifa com o id {id} não encontrada.");
         }
 
-        return Tarifa;
+        return tarifa;
     }
 
     public async Task UpdateTarifaAsync(int id, TarifaModel tarifaModel)
     {
-        using var _ = await httpClient.PutAsJsonAsync($"Tarifa/Update/{id}", tarifaModel);
+        using var _ = await httpClient.PutAsJsonAsync($"tarifas/Update/{id}", tarifaModel);
     }
 }
