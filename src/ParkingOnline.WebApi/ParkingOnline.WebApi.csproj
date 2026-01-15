@@ -10,33 +10,4 @@
     <ProjectReference Include="..\ParkingOnline.Infrastructure\ParkingOnline.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Cliente\CreateCliente\" />
-    <Folder Include="Features\Cliente\DeleteCliente\" />
-    <Folder Include="Features\Cliente\GetAllClientes\" />
-    <Folder Include="Features\Cliente\GetClienteById\" />
-    <Folder Include="Features\Cliente\UpdateCliente\" />
-    <Folder Include="Features\Tarifa\CreateTarifa\" />
-    <Folder Include="Features\Tarifa\DeleteTarifa\" />
-    <Folder Include="Features\Tarifa\GetAllTarifas\" />
-    <Folder Include="Features\Tarifa\GetTarifaById\" />
-    <Folder Include="Features\Tarifa\UpdateTarifa\" />
-    <Folder Include="Features\Ticket\CreateTicket\" />
-    <Folder Include="Features\Ticket\DeleteTicket\" />
-    <Folder Include="Features\Ticket\GetAllTickets\" />
-    <Folder Include="Features\Ticket\GetTicketById\" />
-    <Folder Include="Features\Ticket\UpdateTicket\" />
-    <Folder Include="Features\Vaga\CreateVaga\" />
-    <Folder Include="Features\Vaga\DeleteVaga\" />
-    <Folder Include="Features\Vaga\GetAllVagas\" />
-    <Folder Include="Features\Vaga\GetVagaById\" />
-    <Folder Include="Features\Vaga\GetVagasLivres\" />
-    <Folder Include="Features\Vaga\UpdateVaga\" />
-    <Folder Include="Features\Veiculo\CreateVeiculo\" />
-    <Folder Include="Features\Veiculo\DeleteVeiculo\" />
-    <Folder Include="Features\Veiculo\GetAllVeiculos\" />
-    <Folder Include="Features\Veiculo\GetVeiculoById\" />
-    <Folder Include="Features\Veiculo\UpdateVeiculo\" />
-  </ItemGroup>
-
 </Project>
