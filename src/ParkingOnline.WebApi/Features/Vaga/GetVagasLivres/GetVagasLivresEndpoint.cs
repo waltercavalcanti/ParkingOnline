@@ -7,14 +7,11 @@ public class GetVagasLivresEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/vagas").WithTags("Vaga");
-        group.MapGet("GetLivres", GetVagasLivresAsync);
-    }
+        app.MapGet("/api/vagas/GetLivres", async (IVagaRepository vagaRepository) =>
+        {
+            var vagas = await vagaRepository.GetVagasLivresAsync();
 
-    public static async Task<IResult> GetVagasLivresAsync(IVagaRepository vagaRepository)
-    {
-        var vagas = await vagaRepository.GetVagasLivresAsync();
-
-        return Results.Ok(vagas);
+            return Results.Ok(vagas);
+        }).WithTags("Vaga");
     }
 }

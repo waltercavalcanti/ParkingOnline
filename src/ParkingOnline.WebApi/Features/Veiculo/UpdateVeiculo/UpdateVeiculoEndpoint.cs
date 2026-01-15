@@ -8,37 +8,34 @@ public class UpdateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/veiculos").WithTags("Veiculo");
-        group.MapPut("Update/{id}", UpdateVeiculoAsync);
-    }
-
-    public static async Task<IResult> UpdateVeiculoAsync(int id, VeiculoUpdateDTO veiculoDTO, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository)
-    {
-        try
+        app.MapPut("/api/veiculos/Update/{id}", async (int id, VeiculoUpdateDTO veiculoDTO, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
         {
-            var veiculoExists = await veiculoRepository.VeiculoExists(id);
-
-            if (!veiculoExists)
+            try
             {
-                return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                var veiculoExists = await veiculoRepository.VeiculoExists(id);
+
+                if (!veiculoExists)
+                {
+                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                }
+
+                var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
+
+                if (!clienteExists)
+                {
+                    return Results.NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
+                }
+
+                veiculoDTO.Id = id;
+
+                await veiculoRepository.UpdateVeiculoAsync(veiculoDTO);
+
+                return Results.NoContent();
             }
-
-            var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
-
-            if (!clienteExists)
+            catch (Exception ex)
             {
-                return Results.NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
+                return Results.BadRequest(ex.Message);
             }
-
-            veiculoDTO.Id = id;
-
-            await veiculoRepository.UpdateVeiculoAsync(veiculoDTO);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+        }).WithTags("Veiculo");
     }
 }

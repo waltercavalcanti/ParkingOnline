@@ -7,28 +7,25 @@ public class DeleteTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tickets").WithTags("Ticket");
-        group.MapDelete("Delete/{id}", DeleteTicketAsync);
-    }
-
-    public static async Task<IResult> DeleteTicketAsync(int id, ITicketRepository ticketRepository)
-    {
-        try
+        app.MapDelete("/api/tickets/Delete/{id}", async (int id, ITicketRepository ticketRepository) =>
         {
-            var ticketExists = await ticketRepository.TicketExists(id);
-
-            if (!ticketExists)
+            try
             {
-                return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                var ticketExists = await ticketRepository.TicketExists(id);
+
+                if (!ticketExists)
+                {
+                    return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                }
+
+                await ticketRepository.DeleteTicketAsync(id);
+
+                return Results.NoContent();
             }
-
-            await ticketRepository.DeleteTicketAsync(id);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Ticket");
     }
 }

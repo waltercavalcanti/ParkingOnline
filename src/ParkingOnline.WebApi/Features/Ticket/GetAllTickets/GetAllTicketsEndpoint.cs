@@ -7,14 +7,11 @@ public class GetAllTicketsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tickets").WithTags("Ticket");
-        group.MapGet("GetAll", GetAllTicketsAsync);
-    }
+        app.MapGet("/api/tickets/GetAll", async (ITicketRepository ticketRepository) =>
+        {
+            var tickets = await ticketRepository.GetAllTicketsAsync();
 
-    public static async Task<IResult> GetAllTicketsAsync(ITicketRepository ticketRepository)
-    {
-        var tickets = await ticketRepository.GetAllTicketsAsync();
-
-        return Results.Ok(tickets);
+            return Results.Ok(tickets);
+        }).WithTags("Ticket");
     }
 }

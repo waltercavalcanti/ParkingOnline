@@ -8,30 +8,27 @@ public class UpdateClienteEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/clientes").WithTags("Cliente");
-        group.MapPut("Update/{id}", UpdateClienteAsync);
-    }
-
-    public static async Task<IResult> UpdateClienteAsync(int id, ClienteUpdateDTO clienteDTO, IClienteRepository clienteRepository)
-    {
-        try
+        app.MapPut("/api/clientes/Update/{id}", async (int id, ClienteUpdateDTO clienteDTO, IClienteRepository clienteRepository) =>
         {
-            var clienteExists = await clienteRepository.ClienteExists(id);
-
-            if (!clienteExists)
+            try
             {
-                return Results.NotFound($"Não há cliente cadastrado com o id {id}.");
+                var clienteExists = await clienteRepository.ClienteExists(id);
+
+                if (!clienteExists)
+                {
+                    return Results.NotFound($"Não há cliente cadastrado com o id {id}.");
+                }
+
+                clienteDTO.Id = id;
+
+                await clienteRepository.UpdateClienteAsync(clienteDTO);
+
+                return Results.NoContent();
             }
-
-            clienteDTO.Id = id;
-
-            await clienteRepository.UpdateClienteAsync(clienteDTO);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Cliente");
     }
 }

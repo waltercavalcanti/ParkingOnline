@@ -9,40 +9,37 @@ public class CreateTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tickets").WithTags("Ticket");
-        group.MapPost("Add", AddTicketAsync);
-    }
-
-    public static async Task<IResult> AddTicketAsync(TicketAddDTO ticketDTO, ITicketRepository ticketRepository, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository)
-    {
-        var veiculoExists = await veiculoRepository.VeiculoExists(ticketDTO.VeiculoId);
-
-        if (!veiculoExists)
+        app.MapPost("/api/tickets/Add", async (TicketAddDTO ticketDTO, ITicketRepository ticketRepository, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) =>
         {
-            return Results.NotFound($"Não há veículo cadastrado com o id {ticketDTO.VeiculoId}.");
-        }
+            var veiculoExists = await veiculoRepository.VeiculoExists(ticketDTO.VeiculoId);
 
-        var vaga = await vagaRepository.GetVagaByIdAsync(ticketDTO.VagaId);
+            if (!veiculoExists)
+            {
+                return Results.NotFound($"Não há veículo cadastrado com o id {ticketDTO.VeiculoId}.");
+            }
 
-        if (vaga == null)
-        {
-            return Results.NotFound($"Não há vaga cadastrada com o id {ticketDTO.VagaId}.");
-        }
+            var vaga = await vagaRepository.GetVagaByIdAsync(ticketDTO.VagaId);
 
-        if (vaga.Ocupada)
-        {
-            return Results.BadRequest($"A vaga com o id {vaga.Id} já está ocupada.");
-        }
+            if (vaga == null)
+            {
+                return Results.NotFound($"Não há vaga cadastrada com o id {ticketDTO.VagaId}.");
+            }
 
-        await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
-        {
-            Id = vaga.Id,
-            Localizacao = vaga.Localizacao,
-            Ocupada = true
-        });
+            if (vaga.Ocupada)
+            {
+                return Results.BadRequest($"A vaga com o id {vaga.Id} já está ocupada.");
+            }
 
-        var ticket = await ticketRepository.AddTicketAsync(ticketDTO);
+            await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
+            {
+                Id = vaga.Id,
+                Localizacao = vaga.Localizacao,
+                Ocupada = true
+            });
 
-        return Results.CreatedAtRoute("GetTicketById", new { id = ticket.Id }, ticket);
+            var ticket = await ticketRepository.AddTicketAsync(ticketDTO);
+
+            return Results.CreatedAtRoute("GetTicketById", new { id = ticket.Id }, ticket);
+        }).WithTags("Ticket");
     }
 }

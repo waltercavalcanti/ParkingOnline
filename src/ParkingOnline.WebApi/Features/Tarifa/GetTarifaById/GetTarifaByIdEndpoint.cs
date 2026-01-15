@@ -7,16 +7,13 @@ public class GetTarifaByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tarifas").WithTags("Tarifa");
-        group.MapGet("GetById/{id}", GetTarifaByIdAsync).WithName("GetTarifaById");
-    }
+        app.MapGet("/api/tarifas/GetById/{id}", async (int id, ITarifaRepository tarifaRepository) =>
+        {
+            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
 
-    public static async Task<IResult> GetTarifaByIdAsync(int id, ITarifaRepository tarifaRepository)
-    {
-        var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
-
-        return tarifa == null
-            ? Results.NotFound($"Não há tarifa cadastrada com o id {id}.")
-            : Results.Ok(tarifa);
+            return tarifa == null
+                ? Results.NotFound($"Não há tarifa cadastrada com o id {id}.")
+                : Results.Ok(tarifa);
+        }).WithTags("Tarifa").WithName("GetTarifaById");
     }
 }

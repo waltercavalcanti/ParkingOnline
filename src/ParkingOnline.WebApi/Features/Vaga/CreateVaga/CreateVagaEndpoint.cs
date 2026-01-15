@@ -8,14 +8,11 @@ public class CreateVagaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/vagas").WithTags("Vaga");
-        group.MapPost("Add", AddVagaAsync);
-    }
+        app.MapPost("/api/vagas/Add", async (VagaAddDTO vagaDTO, IVagaRepository vagaRepository) =>
+        {
+            var vaga = await vagaRepository.AddVagaAsync(vagaDTO);
 
-    public static async Task<IResult> AddVagaAsync(VagaAddDTO vagaDTO, IVagaRepository vagaRepository)
-    {
-        var vaga = await vagaRepository.AddVagaAsync(vagaDTO);
-
-        return Results.CreatedAtRoute("GetVagaById", new { id = vaga.Id }, vaga);
+            return Results.CreatedAtRoute("GetVagaById", new { id = vaga.Id }, vaga);
+        }).WithTags("Vaga");
     }
 }

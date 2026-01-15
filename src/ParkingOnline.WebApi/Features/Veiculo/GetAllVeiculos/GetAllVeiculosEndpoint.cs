@@ -7,14 +7,11 @@ public class GetAllVeiculosEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/veiculos").WithTags("Veiculo");
-        group.MapGet("GetAll", GetAllVeiculosAsync);
-    }
+        app.MapGet("/api/veiculos/GetAll", async (IVeiculoRepository veiculoRepository) =>
+        {
+            var veiculos = await veiculoRepository.GetAllVeiculosAsync();
 
-    public static async Task<IResult> GetAllVeiculosAsync(IVeiculoRepository veiculoRepository)
-    {
-        var veiculos = await veiculoRepository.GetAllVeiculosAsync();
-
-        return Results.Ok(veiculos);
+            return Results.Ok(veiculos);
+        }).WithTags("Veiculo");
     }
 }

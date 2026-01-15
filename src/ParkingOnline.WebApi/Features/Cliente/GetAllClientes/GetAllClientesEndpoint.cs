@@ -7,15 +7,11 @@ public class GetAllClientesEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/clientes").WithTags("Cliente");
-        group.MapGet("GetAll", GetAllClientesAsync);
+        app.MapGet("/api/clientes/GetAll", async (IClienteRepository clienteRepository) =>
+        {
+            var clientes = await clienteRepository.GetAllClientesAsync();
+
+            return Results.Ok(clientes);
+        }).WithTags("Cliente");
     }
-
-    public static async Task<IResult> GetAllClientesAsync(IClienteRepository clienteRepository)
-    {
-        var clientes = await clienteRepository.GetAllClientesAsync();
-
-        return Results.Ok(clientes);
-    }
-
 }

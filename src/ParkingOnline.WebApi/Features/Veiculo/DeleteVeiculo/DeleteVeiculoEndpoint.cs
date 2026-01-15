@@ -7,28 +7,25 @@ public class DeleteVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/veiculos").WithTags("Veiculo");
-        group.MapDelete("Delete/{id}", DeleteVeiculoAsync);
-    }
-
-    public static async Task<IResult> DeleteVeiculoAsync(int id, IVeiculoRepository veiculoRepository)
-    {
-        try
+        app.MapDelete("/api/veiculos/Delete/{id}", async (int id, IVeiculoRepository veiculoRepository) =>
         {
-            var veiculoExists = await veiculoRepository.VeiculoExists(id);
-
-            if (!veiculoExists)
+            try
             {
-                return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                var veiculoExists = await veiculoRepository.VeiculoExists(id);
+
+                if (!veiculoExists)
+                {
+                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                }
+
+                await veiculoRepository.DeleteVeiculoAsync(id);
+
+                return Results.NoContent();
             }
-
-            await veiculoRepository.DeleteVeiculoAsync(id);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Veiculo");
     }
 }

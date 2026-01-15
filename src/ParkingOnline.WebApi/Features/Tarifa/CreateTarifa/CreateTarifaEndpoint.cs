@@ -8,14 +8,11 @@ public class CreateTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tarifas").WithTags("Tarifa");
-        group.MapPost("Add", AddTarifaAsync);
-    }
+        app.MapPost("/api/tarifas/Add", async (TarifaAddDTO tarifaDTO, ITarifaRepository tarifaRepository) =>
+        {
+            var tarifa = await tarifaRepository.AddTarifaAsync(tarifaDTO);
 
-    public static async Task<IResult> AddTarifaAsync(TarifaAddDTO tarifaDTO, ITarifaRepository tarifaRepository)
-    {
-        var tarifa = await tarifaRepository.AddTarifaAsync(tarifaDTO);
-
-        return Results.CreatedAtRoute("GetTarifaById", new { id = tarifa.Id }, tarifa);
+            return Results.CreatedAtRoute("GetTarifaById", new { id = tarifa.Id }, tarifa);
+        }).WithTags("Tarifa");
     }
 }

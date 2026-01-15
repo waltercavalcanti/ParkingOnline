@@ -7,16 +7,13 @@ public class GetVagaByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/vagas").WithTags("Vaga");
-        group.MapGet("GetById/{id}", GetVagaByIdAsync).WithName("GetVagaById");
-    }
+        app.MapGet("/api/vagas/GetById/{id}", async (int id, IVagaRepository vagaRepository) =>
+        {
+            var vaga = await vagaRepository.GetVagaByIdAsync(id);
 
-    public static async Task<IResult> GetVagaByIdAsync(int id, IVagaRepository vagaRepository)
-    {
-        var vaga = await vagaRepository.GetVagaByIdAsync(id);
-
-        return vaga == null
-            ? Results.NotFound($"Não há vaga cadastrada com o id {id}.")
-            : Results.Ok(vaga);
+            return vaga == null
+                ? Results.NotFound($"Não há vaga cadastrada com o id {id}.")
+                : Results.Ok(vaga);
+        }).WithTags("Vaga").WithName("GetVagaById");
     }
 }

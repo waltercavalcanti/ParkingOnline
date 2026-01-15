@@ -7,28 +7,25 @@ public class DeleteTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tarifas").WithTags("Tarifa");
-        group.MapDelete("Delete/{id}", DeleteTarifaAsync);
-    }
-
-    public static async Task<IResult> DeleteTarifaAsync(int id, ITarifaRepository tarifaRepository)
-    {
-        try
+        app.MapDelete("/api/tarifas/Delete/{id}", async (int id, ITarifaRepository tarifaRepository) =>
         {
-            var tarifaExists = await tarifaRepository.TarifaExists(id);
-
-            if (!tarifaExists)
+            try
             {
-                return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                var tarifaExists = await tarifaRepository.TarifaExists(id);
+
+                if (!tarifaExists)
+                {
+                    return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                }
+
+                await tarifaRepository.DeleteTarifaAsync(id);
+
+                return Results.NoContent();
             }
-
-            await tarifaRepository.DeleteTarifaAsync(id);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Tarifa");
     }
 }

@@ -8,30 +8,27 @@ public class UpdateTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/tarifas").WithTags("Tarifa");
-        group.MapPut("Update/{id}", UpdateTarifaAsync);
-    }
-
-    public static async Task<IResult> UpdateTarifaAsync(int id, TarifaUpdateDTO tarifaDTO, ITarifaRepository tarifaRepository)
-    {
-        try
+        app.MapPut("/api/tarifas/Update/{id}", async (int id, TarifaUpdateDTO tarifaDTO, ITarifaRepository tarifaRepository) =>
         {
-            var tarifaExists = await tarifaRepository.TarifaExists(id);
-
-            if (!tarifaExists)
+            try
             {
-                return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                var tarifaExists = await tarifaRepository.TarifaExists(id);
+
+                if (!tarifaExists)
+                {
+                    return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                }
+
+                tarifaDTO.Id = id;
+
+                await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
+
+                return Results.NoContent();
             }
-
-            tarifaDTO.Id = id;
-
-            await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
-
-            return Results.NoContent();
-        }
-        catch (Exception ex)
-        {
-            return Results.BadRequest(ex.Message);
-        }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Tarifa");
     }
 }
