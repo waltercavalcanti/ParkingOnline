@@ -1,4 +1,5 @@
-﻿using ParkingOnline.Infrastructure.Data;
+﻿using Carter;
+using ParkingOnline.Infrastructure.Data;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Startup;
@@ -18,6 +19,7 @@ public static class DependencyInjectionSetup
         });
 
         services.AddControllers();
+        services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
         services.AddScoped<ITarifaRepository, TarifaRepository>();
         services.AddScoped<ITicketRepository, TicketRepository>();
@@ -26,6 +28,8 @@ public static class DependencyInjectionSetup
 
         services.AddEndpointsApiExplorer();
         services.AddOpenApi();
+
+        services.AddCarter();
 
         return services;
     }

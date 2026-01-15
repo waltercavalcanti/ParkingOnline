@@ -1,19 +1,15 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using ParkingOnline.Core.DTOs.Veiculo;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepository
+public class VeiculoRepository(IDbConnectionFactory dbConnectionFactory) : IVeiculoRepository
 {
-    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
-
     public async Task<Veiculo> AddVeiculoAsync(VeiculoAddDTO veiculoDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "INSERT INTO Veiculo (Marca, Modelo, Placa, ClienteId) OUTPUT INSERTED.Id VALUES (@Marca, @Modelo, @Placa, @ClienteId)";
         var parameters = new
@@ -31,7 +27,7 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
     public async Task DeleteVeiculoAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "DELETE FROM Veiculo WHERE Id = @Id";
         var parameter = new
@@ -78,7 +74,7 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
     private async Task<IEnumerable<Veiculo>> QueryVeiculosAsync(string query, object? parameters = null)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var veiculoDictionary = new Dictionary<int, Veiculo>();
 
@@ -109,7 +105,7 @@ public class VeiculoRepository(IConfiguration configuration) : IVeiculoRepositor
 
     public async Task UpdateVeiculoAsync(VeiculoUpdateDTO veiculoDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "UPDATE Veiculo SET Marca = @Marca, Modelo = @Modelo, Placa = @Placa, ClienteId = @ClienteId WHERE Id = @Id";
         var parameters = new

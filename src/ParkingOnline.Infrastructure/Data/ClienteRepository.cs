@@ -1,19 +1,15 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using ParkingOnline.Core.DTOs.Cliente;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class ClienteRepository(IConfiguration configuration) : IClienteRepository
+public class ClienteRepository(IDbConnectionFactory dbConnectionFactory) : IClienteRepository
 {
-    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
-
     public async Task<Cliente> AddClienteAsync(ClienteAddDTO clienteDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "INSERT INTO Cliente (Nome, Telefone) OUTPUT INSERTED.Id VALUES (@Nome, @Telefone)";
         var parameters = new
@@ -29,7 +25,7 @@ public class ClienteRepository(IConfiguration configuration) : IClienteRepositor
 
     public async Task DeleteClienteAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "DELETE FROM Cliente WHERE Id = @Id";
         var parameter = new
@@ -75,7 +71,7 @@ public class ClienteRepository(IConfiguration configuration) : IClienteRepositor
 
     private async Task<IEnumerable<Cliente>> QueryClientesAsync(string query, object? parameters = null)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var clienteDictionary = new Dictionary<int, Cliente>();
 
@@ -102,7 +98,7 @@ public class ClienteRepository(IConfiguration configuration) : IClienteRepositor
 
     public async Task UpdateClienteAsync(ClienteUpdateDTO clienteDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "UPDATE Cliente SET Nome = @Nome, Telefone = @Telefone WHERE Id = @Id";
         var parameters = new

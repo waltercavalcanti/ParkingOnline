@@ -1,19 +1,15 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using ParkingOnline.Core.DTOs.Tarifa;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
+public class TarifaRepository(IDbConnectionFactory dbConnectionFactory) : ITarifaRepository
 {
-    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
-
     public async Task<Tarifa> AddTarifaAsync(TarifaAddDTO tarifaDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "INSERT INTO Tarifa (ValorInicial, ValorPorHora) OUTPUT INSERTED.Id VALUES (@ValorInicial, @ValorPorHora)";
         var parameters = new
@@ -29,7 +25,7 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
 
     public async Task DeleteTarifaAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "DELETE FROM Tarifa WHERE Id = @Id";
         var parameter = new
@@ -42,7 +38,7 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
 
     public async Task<IEnumerable<Tarifa>> GetAllTarifasAsync()
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "SELECT * FROM Tarifa";
         var tarifas = await conexao.QueryAsync<Tarifa>(query);
@@ -59,7 +55,7 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
 
     public async Task<Tarifa> GetTarifaByIdAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "SELECT * FROM Tarifa WHERE Id = @Id";
         var parameter = new
@@ -74,7 +70,7 @@ public class TarifaRepository(IConfiguration configuration) : ITarifaRepository
 
     public async Task UpdateTarifaAsync(TarifaUpdateDTO tarifaDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "UPDATE Tarifa SET ValorInicial = @ValorInicial, ValorPorHora = @ValorPorHora WHERE Id = @Id";
         var parameters = new

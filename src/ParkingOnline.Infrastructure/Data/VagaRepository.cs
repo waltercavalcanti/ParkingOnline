@@ -1,19 +1,15 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using ParkingOnline.Core.DTOs.Vaga;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class VagaRepository(IConfiguration configuration) : IVagaRepository
+public class VagaRepository(IDbConnectionFactory dbConnectionFactory) : IVagaRepository
 {
-    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
-
     public async Task<Vaga> AddVagaAsync(VagaAddDTO vagaDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "INSERT INTO Vaga (Localizacao, Ocupada) OUTPUT INSERTED.Id VALUES (@Localizacao, @Ocupada)";
         var parameters = new
@@ -29,7 +25,7 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
     public async Task DeleteVagaAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "DELETE FROM Vaga WHERE Id = @Id";
         var parameter = new
@@ -42,7 +38,7 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
     public async Task<IEnumerable<Vaga>> GetAllVagasAsync()
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "SELECT * FROM Vaga";
         var vagas = await conexao.QueryAsync<Vaga>(query);
@@ -52,7 +48,7 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
     public async Task<IEnumerable<Vaga>> GetVagasLivresAsync()
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "SELECT * FROM Vaga WHERE Ocupada = 0";
         var vagas = await conexao.QueryAsync<Vaga>(query);
@@ -62,7 +58,7 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
     public async Task<Vaga> GetVagaByIdAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "SELECT * FROM Vaga WHERE Id = @Id";
         var parameter = new
@@ -77,7 +73,7 @@ public class VagaRepository(IConfiguration configuration) : IVagaRepository
 
     public async Task UpdateVagaAsync(VagaUpdateDTO vagaDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "UPDATE Vaga SET Localizacao = @Localizacao, Ocupada = @Ocupada WHERE Id = @Id";
         var parameters = new

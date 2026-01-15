@@ -1,19 +1,15 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using ParkingOnline.Core.DTOs.Ticket;
 using ParkingOnline.Core.Entities;
 using ParkingOnline.Infrastructure.Data.Interfaces;
 
 namespace ParkingOnline.Infrastructure.Data;
 
-public class TicketRepository(IConfiguration configuration) : ITicketRepository
+public class TicketRepository(IDbConnectionFactory dbConnectionFactory) : ITicketRepository
 {
-    private SqlConnection GetConexao() => new(configuration.GetConnectionString("ParkingOnlineDBConnStr"));
-
     public async Task<Ticket> AddTicketAsync(TicketAddDTO ticketDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
         var parameters = new
@@ -30,7 +26,7 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
 
     public async Task DeleteTicketAsync(int id)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var query = "DELETE FROM Ticket WHERE Id = @Id";
         var parameter = new
@@ -78,7 +74,7 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
 
     private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var ticketDictionary = new Dictionary<int, Ticket>();
 
@@ -107,11 +103,11 @@ public class TicketRepository(IConfiguration configuration) : ITicketRepository
 
     public async Task UpdateTicketAsync(TicketUpdateDTO ticketDTO)
     {
-        using var conexao = GetConexao();
+        using var conexao = dbConnectionFactory.CreateConnection();
 
         var dataEntrada = (await GetTicketByIdAsync(ticketDTO.Id)).DataEntrada;
         var dataSaida = DateTime.Now;
-        var tarifa = await new TarifaRepository(configuration).GetTarifaAtualAsync();
+        var tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
 
         var query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
         var parameters = new
