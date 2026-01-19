@@ -9,7 +9,7 @@ public class UpdateTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/tickets/Update/{id}", async (int id, TicketUpdateDTO ticketDTO, ITicketRepository ticketRepository, IVagaRepository vagaRepository) =>
+        app.MapPut("/api/tickets/Update/{id}", async (int id, UpdateTicketRequest request, ITicketRepository ticketRepository, IVagaRepository vagaRepository) =>
         {
             try
             {
@@ -29,7 +29,10 @@ public class UpdateTicketEndpoint : ICarterModule
                     Ocupada = false
                 });
 
-                ticketDTO.Id = id;
+                TicketUpdateDTO ticketDTO = new()
+                {
+                    Id = id
+                };
 
                 await ticketRepository.UpdateTicketAsync(ticketDTO);
 

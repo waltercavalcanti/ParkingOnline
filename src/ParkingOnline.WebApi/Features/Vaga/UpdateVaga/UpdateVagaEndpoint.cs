@@ -8,7 +8,7 @@ public class UpdateVagaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/vagas/Update/{id}", async (int id, VagaUpdateDTO vagaDTO, IVagaRepository vagaRepository) =>
+        app.MapPut("/api/vagas/Update/{id}", async (int id, UpdateVagaRequest request, IVagaRepository vagaRepository) =>
         {
             try
             {
@@ -19,7 +19,12 @@ public class UpdateVagaEndpoint : ICarterModule
                     return Results.NotFound($"Não há vaga cadastrada com o id {id}.");
                 }
 
-                vagaDTO.Id = id;
+                VagaUpdateDTO vagaDTO = new()
+                {
+                    Id = id,
+                    Localizacao = request.Localizacao,
+                    Ocupada = request.Ocupada
+                };
 
                 await vagaRepository.UpdateVagaAsync(vagaDTO);
 

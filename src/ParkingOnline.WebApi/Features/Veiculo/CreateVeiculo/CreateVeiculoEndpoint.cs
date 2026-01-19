@@ -8,8 +8,16 @@ public class CreateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/veiculos/Add", async (VeiculoAddDTO veiculoDTO, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
+        app.MapPost("/api/veiculos/Add", async (CreateVeiculoRequest request, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
         {
+            VeiculoAddDTO veiculoDTO = new()
+            {
+                Marca = request.Marca,
+                Modelo = request.Modelo,
+                Placa = request.Placa,
+                ClienteId = request.ClienteId
+            };
+
             var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
 
             if (!clienteExists)

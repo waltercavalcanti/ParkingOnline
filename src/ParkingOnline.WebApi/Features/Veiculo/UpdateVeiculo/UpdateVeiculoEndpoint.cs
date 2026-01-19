@@ -8,7 +8,7 @@ public class UpdateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/veiculos/Update/{id}", async (int id, VeiculoUpdateDTO veiculoDTO, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
+        app.MapPut("/api/veiculos/Update/{id}", async (int id, UpdateVeiculoRequest request, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
         {
             try
             {
@@ -18,6 +18,14 @@ public class UpdateVeiculoEndpoint : ICarterModule
                 {
                     return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
                 }
+
+                VeiculoUpdateDTO veiculoDTO = new()
+                {
+                    Marca = request.Marca,
+                    Modelo = request.Modelo,
+                    Placa = request.Placa,
+                    ClienteId = request.ClienteId
+                };
 
                 var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
 

@@ -9,8 +9,14 @@ public class CreateTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/tickets/Add", async (TicketAddDTO ticketDTO, ITicketRepository ticketRepository, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) =>
+        app.MapPost("/api/tickets/Add", async (CreateTicketRequest request, ITicketRepository ticketRepository, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) =>
         {
+            TicketAddDTO ticketDTO = new()
+            {
+                VeiculoId = request.VeiculoId,
+                VagaId = request.VagaId
+            };
+
             var veiculoExists = await veiculoRepository.VeiculoExists(ticketDTO.VeiculoId);
 
             if (!veiculoExists)

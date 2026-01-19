@@ -8,7 +8,7 @@ public class UpdateClienteEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/clientes/Update/{id}", async (int id, ClienteUpdateDTO clienteDTO, IClienteRepository clienteRepository) =>
+        app.MapPut("/api/clientes/Update/{id}", async (int id, UpdateClienteRequest request, IClienteRepository clienteRepository) =>
         {
             try
             {
@@ -19,7 +19,12 @@ public class UpdateClienteEndpoint : ICarterModule
                     return Results.NotFound($"Não há cliente cadastrado com o id {id}.");
                 }
 
-                clienteDTO.Id = id;
+                ClienteUpdateDTO clienteDTO = new()
+                {
+                    Id = id,
+                    Nome = request.Nome,
+                    Telefone = request.Telefone
+                };
 
                 await clienteRepository.UpdateClienteAsync(clienteDTO);
 

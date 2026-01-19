@@ -8,7 +8,7 @@ public class UpdateTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/tarifas/Update/{id}", async (int id, TarifaUpdateDTO tarifaDTO, ITarifaRepository tarifaRepository) =>
+        app.MapPut("/api/tarifas/Update/{id}", async (int id, UpdateTarifaRequest request, ITarifaRepository tarifaRepository) =>
         {
             try
             {
@@ -19,7 +19,12 @@ public class UpdateTarifaEndpoint : ICarterModule
                     return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
                 }
 
-                tarifaDTO.Id = id;
+                TarifaUpdateDTO tarifaDTO = new()
+                {
+                    Id = id,
+                    ValorInicial = request.ValorInicial,
+                    ValorPorHora = request.ValorPorHora
+                };
 
                 await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
 
