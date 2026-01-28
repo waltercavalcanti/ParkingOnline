@@ -5,7 +5,6 @@
     <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" />
     <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
