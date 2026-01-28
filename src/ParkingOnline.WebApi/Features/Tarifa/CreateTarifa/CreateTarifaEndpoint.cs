@@ -1,6 +1,6 @@
 ﻿using Carter;
-using ParkingOnline.Core.DTOs.Tarifa;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Dtos.Tarifa;
 
 namespace ParkingOnline.WebApi.Features.Tarifa.CreateTarifa;
 

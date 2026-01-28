@@ -1,6 +1,6 @@
 ﻿using Carter;
-using ParkingOnline.Core.DTOs.Cliente;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Dtos.Cliente;
 
 namespace ParkingOnline.WebApi.Features.Cliente.UpdateCliente;
 

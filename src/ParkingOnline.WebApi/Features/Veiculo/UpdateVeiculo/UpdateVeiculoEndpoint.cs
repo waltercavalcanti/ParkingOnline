@@ -1,6 +1,6 @@
 ﻿using Carter;
-using ParkingOnline.Core.DTOs.Veiculo;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Dtos.Veiculo;
 
 namespace ParkingOnline.WebApi.Features.Veiculo.UpdateVeiculo;
 

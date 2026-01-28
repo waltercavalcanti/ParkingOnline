@@ -1,5 +1,5 @@
 ﻿using Carter;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Tarifa.DeleteTarifa;
 

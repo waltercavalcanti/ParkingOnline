@@ -1,6 +1,6 @@
 ﻿using Carter;
-using ParkingOnline.Core.DTOs.Vaga;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Dtos.Vaga;
 
 namespace ParkingOnline.WebApi.Features.Vaga.CreateVaga;
 

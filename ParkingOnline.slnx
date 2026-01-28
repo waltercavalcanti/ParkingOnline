@@ -5,8 +5,6 @@
     <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="src/ParkingOnline.Core/ParkingOnline.Core.csproj" />
-    <Project Path="src/ParkingOnline.Infrastructure/ParkingOnline.Infrastructure.csproj" />
     <Project Path="src/ParkingOnline.UI/ParkingOnline.UI.csproj" />
     <Project Path="src/ParkingOnline.WebApi/ParkingOnline.WebApi.csproj" />
   </Folder>

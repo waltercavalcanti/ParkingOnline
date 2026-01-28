@@ -1,6 +1,7 @@
 ﻿using Carter;
-using ParkingOnline.Infrastructure.Data;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Startup;
 

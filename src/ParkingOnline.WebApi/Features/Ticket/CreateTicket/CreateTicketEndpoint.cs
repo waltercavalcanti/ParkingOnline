@@ -1,7 +1,7 @@
 ﻿using Carter;
-using ParkingOnline.Core.DTOs.Ticket;
-using ParkingOnline.Core.DTOs.Vaga;
-using ParkingOnline.Infrastructure.Data.Interfaces;
+using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Dtos.Ticket;
+using ParkingOnline.WebApi.Dtos.Vaga;
 
 namespace ParkingOnline.WebApi.Features.Ticket.CreateTicket;
 
