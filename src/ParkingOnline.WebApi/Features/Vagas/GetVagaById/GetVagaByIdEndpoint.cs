@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagaById;
 
@@ -7,13 +6,13 @@ public class GetVagaByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/vagas/GetById/{id}", async (int id, IVagaRepository vagaRepository) =>
+        app.MapGet("/api/vagas/GetById/{id}", async (int id, IGetVagaByIdHandler handler) =>
         {
-            var vaga = await vagaRepository.GetVagaByIdAsync(id);
+            var response = await handler.GetVagaByIdAsync(id);
 
-            return vaga == null
+            return response.Vaga == null
                 ? Results.NotFound($"Não há vaga cadastrada com o id {id}.")
-                : Results.Ok(vaga);
+                : Results.Ok(response.Vaga);
         }).WithTags("Vaga").WithName("GetVagaById");
     }
 }

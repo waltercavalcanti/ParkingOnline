@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagasLivres;
 
@@ -7,11 +6,11 @@ public class GetVagasLivresEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/vagas/GetLivres", async (IVagaRepository vagaRepository) =>
+        app.MapGet("/api/vagas/GetLivres", async (IGetVagasLivresHandler handler) =>
         {
-            var vagas = await vagaRepository.GetVagasLivresAsync();
+            var response = await handler.GetVagasLivresAsync();
 
-            return Results.Ok(vagas);
+            return Results.Ok(response.Vagas);
         }).WithTags("Vaga");
     }
 }

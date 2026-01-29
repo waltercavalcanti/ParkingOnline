@@ -1,6 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Vagas;
 
 namespace ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
 
@@ -8,25 +6,21 @@ public class UpdateVagaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/vagas/Update/{id}", async (int id, UpdateVagaRequest request, IVagaRepository vagaRepository) =>
+        app.MapPut("/api/vagas/Update/{id}", async (int id, UpdateVagaRequest request, IUpdateVagaHandler handler) =>
         {
             try
             {
-                var vagaExists = await vagaRepository.VagaExists(id);
+                if (id != request.Id)
+                {
+                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                }
 
-                if (!vagaExists)
+                var foiAtualizado = await handler.UpdateVagaAsync(request);
+
+                if (!foiAtualizado)
                 {
                     return Results.NotFound($"Não há vaga cadastrada com o id {id}.");
                 }
-
-                VagaUpdateDTO vagaDTO = new()
-                {
-                    Id = id,
-                    Localizacao = request.Localizacao,
-                    Ocupada = request.Ocupada
-                };
-
-                await vagaRepository.UpdateVagaAsync(vagaDTO);
 
                 return Results.NoContent();
             }

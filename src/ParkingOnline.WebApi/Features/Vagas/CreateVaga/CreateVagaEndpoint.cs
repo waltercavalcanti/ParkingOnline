@@ -1,6 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Vagas;
 
 namespace ParkingOnline.WebApi.Features.Vagas.CreateVaga;
 
@@ -8,17 +6,11 @@ public class CreateVagaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/vagas/Add", async (CreateVagaRequest request, IVagaRepository vagaRepository) =>
+        app.MapPost("/api/vagas/Add", async (CreateVagaRequest request, ICreateVagaHandler handler) =>
         {
-            VagaAddDTO vagaDTO = new()
-            {
-                Localizacao = request.Localizacao,
-                Ocupada = request.Ocupada
-            };
+            var response = await handler.AddVagaAsync(request);
 
-            var vaga = await vagaRepository.AddVagaAsync(vagaDTO);
-
-            return Results.CreatedAtRoute("GetVagaById", new { id = vaga.Id }, vaga);
+            return Results.CreatedAtRoute("GetVagaById", new { id = response.Id }, response);
         }).WithTags("Vaga");
     }
 }

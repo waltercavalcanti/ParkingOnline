@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Vagas.DeleteVaga;
 
@@ -7,25 +6,21 @@ public class DeleteVagaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/api/vagas/Delete/{id}", async (int id, IVagaRepository vagaRepository) =>
+        app.MapDelete("/api/vagas/Delete/{id}", async (int id, IDeleteVagaHandler handler) =>
         {
             try
             {
-                var vagaExists = await vagaRepository.VagaExists(id);
+                var response = await handler.DeleteVagaAsync(id);
 
-                if (!vagaExists)
+                if (response.VagaOcupada)
                 {
-                    return Results.NotFound($"Não há vaga cadastrada com o id {id}.");
+                    return Results.BadRequest(response.Mensagem);
                 }
 
-                var vagaOcupada = await vagaRepository.VagaOcupada(id);
-
-                if (vagaOcupada)
+                if (!response.FoiDeletado)
                 {
-                    return Results.BadRequest("Não é possível deletar uma vaga que está ocupada.");
+                    return Results.NotFound(response.Mensagem);
                 }
-
-                await vagaRepository.DeleteVagaAsync(id);
 
                 return Results.NoContent();
             }
