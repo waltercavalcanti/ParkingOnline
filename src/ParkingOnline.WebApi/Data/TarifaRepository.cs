@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Tarifa;
+using ParkingOnline.WebApi.Dtos.Tarifas;
 using ParkingOnline.WebApi.Entities;
 using ParkingOnline.WebApi.Shared.Data;
 

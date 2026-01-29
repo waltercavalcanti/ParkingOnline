@@ -1,0 +1,31 @@
+﻿using Carter;
+using ParkingOnline.WebApi.Data.Interfaces;
+
+namespace ParkingOnline.WebApi.Features.Veiculos.DeleteVeiculo;
+
+public class DeleteVeiculoEndpoint : ICarterModule
+{
+    public void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapDelete("/api/veiculos/Delete/{id}", async (int id, IVeiculoRepository veiculoRepository) =>
+        {
+            try
+            {
+                var veiculoExists = await veiculoRepository.VeiculoExists(id);
+
+                if (!veiculoExists)
+                {
+                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                }
+
+                await veiculoRepository.DeleteVeiculoAsync(id);
+
+                return Results.NoContent();
+            }
+            catch (Exception ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        }).WithTags("Veiculo");
+    }
+}

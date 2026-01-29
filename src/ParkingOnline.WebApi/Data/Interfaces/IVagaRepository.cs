@@ -1,4 +1,4 @@
-﻿using ParkingOnline.WebApi.Dtos.Vaga;
+﻿using ParkingOnline.WebApi.Dtos.Vagas;
 using ParkingOnline.WebApi.Entities;
 
 namespace ParkingOnline.WebApi.Data.Interfaces;
