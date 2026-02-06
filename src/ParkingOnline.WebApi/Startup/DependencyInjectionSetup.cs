@@ -17,6 +17,11 @@ using ParkingOnline.WebApi.Features.Vagas.GetAllVagas;
 using ParkingOnline.WebApi.Features.Vagas.GetVagaById;
 using ParkingOnline.WebApi.Features.Vagas.GetVagasLivres;
 using ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
+using ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
+using ParkingOnline.WebApi.Features.Veiculos.DeleteVeiculo;
+using ParkingOnline.WebApi.Features.Veiculos.GetAllVeiculos;
+using ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;
+using ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Startup;
@@ -62,6 +67,12 @@ public static class DependencyInjectionSetup
         services.AddScoped<IGetVagasLivresHandler, GetVagasLivresHandler>();
         services.AddScoped<IUpdateVagaHandler, UpdateVagaHandler>();
         services.AddScoped<IDeleteVagaHandler, DeleteVagaHandler>();
+
+        services.AddScoped<ICreateVeiculoHandler, CreateVeiculoHandler>();
+        services.AddScoped<IGetAllVeiculosHandler, GetAllVeiculosHandler>();
+        services.AddScoped<IGetVeiculoByIdHandler, GetVeiculoByIdHandler>();
+        services.AddScoped<IUpdateVeiculoHandler, UpdateVeiculoHandler>();
+        services.AddScoped<IDeleteVeiculoHandler, DeleteVeiculoHandler>();
 
         services.AddEndpointsApiExplorer();
         services.AddOpenApi();

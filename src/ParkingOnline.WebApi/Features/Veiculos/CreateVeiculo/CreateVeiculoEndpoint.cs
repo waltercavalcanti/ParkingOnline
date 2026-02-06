@@ -1,6 +1,5 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Veiculos;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
 
@@ -8,26 +7,18 @@ public class CreateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/veiculos/Add", async (CreateVeiculoRequest request, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
+        app.MapPost("/api/veiculos/Add", async (CreateVeiculoRequest request, ICreateVeiculoHandler handler, IClienteRepository clienteRepository) =>
         {
-            VeiculoAddDTO veiculoDTO = new()
-            {
-                Marca = request.Marca,
-                Modelo = request.Modelo,
-                Placa = request.Placa,
-                ClienteId = request.ClienteId
-            };
-
-            var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
+            var clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
 
             if (!clienteExists)
             {
-                return Results.NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
+                return Results.NotFound($"Não há cliente cadastrado com o id {request.ClienteId}.");
             }
 
-            var veiculo = await veiculoRepository.AddVeiculoAsync(veiculoDTO);
+            var response = await handler.AddVeiculoAsync(request);
 
-            return Results.CreatedAtRoute("GetVeiculoById", new { id = veiculo.Id }, veiculo);
+            return Results.CreatedAtRoute("GetVeiculoById", new { id = response.Id }, response);
         }).WithTags("Veiculo");
     }
 }

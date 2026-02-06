@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;
 
@@ -7,13 +6,13 @@ public class GetVeiculoByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/veiculos/GetById/{id}", async (int id, IVeiculoRepository veiculoRepository) =>
+        app.MapGet("/api/veiculos/GetById/{id}", async (int id, IGetVeiculoByIdHandler handler) =>
         {
-            var veiculo = await veiculoRepository.GetVeiculoByIdAsync(id);
+            var response = await handler.GetVeiculoByIdAsync(id);
 
-            return veiculo == null
+            return response.Veiculo == null
                 ? Results.NotFound($"Não há veículo cadastrado com o id {id}.")
-                : Results.Ok(veiculo);
+                : Results.Ok(response.Veiculo);
         }).WithTags("Veiculo").WithName("GetVeiculoById");
     }
 }

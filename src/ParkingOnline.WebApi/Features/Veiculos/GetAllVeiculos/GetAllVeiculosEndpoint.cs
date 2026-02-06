@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetAllVeiculos;
 
@@ -7,11 +6,11 @@ public class GetAllVeiculosEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/veiculos/GetAll", async (IVeiculoRepository veiculoRepository) =>
+        app.MapGet("/api/veiculos/GetAll", async (IGetAllVeiculosHandler handler) =>
         {
-            var veiculos = await veiculoRepository.GetAllVeiculosAsync();
+            var response = await handler.GetAllVeiculosAsync();
 
-            return Results.Ok(veiculos);
+            return Results.Ok(response.Veiculos);
         }).WithTags("Veiculo");
     }
 }

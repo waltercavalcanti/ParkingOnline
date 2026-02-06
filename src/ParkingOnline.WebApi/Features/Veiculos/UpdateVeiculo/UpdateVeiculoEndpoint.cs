@@ -1,6 +1,5 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Veiculos;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
 
@@ -8,35 +7,28 @@ public class UpdateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/veiculos/Update/{id}", async (int id, UpdateVeiculoRequest request, IVeiculoRepository veiculoRepository, IClienteRepository clienteRepository) =>
+        app.MapPut("/api/veiculos/Update/{id}", async (int id, UpdateVeiculoRequest request, IUpdateVeiculoHandler handler, IClienteRepository clienteRepository) =>
         {
             try
             {
-                var veiculoExists = await veiculoRepository.VeiculoExists(id);
-
-                if (!veiculoExists)
+                if (id != request.Id)
                 {
-                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
                 }
 
-                VeiculoUpdateDTO veiculoDTO = new()
-                {
-                    Marca = request.Marca,
-                    Modelo = request.Modelo,
-                    Placa = request.Placa,
-                    ClienteId = request.ClienteId
-                };
-
-                var clienteExists = await clienteRepository.ClienteExists(veiculoDTO.ClienteId);
+                var clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
 
                 if (!clienteExists)
                 {
-                    return Results.NotFound($"Não há cliente cadastrado com o id {veiculoDTO.ClienteId}.");
+                    return Results.NotFound($"Não há cliente cadastrado com o id {request.ClienteId}.");
                 }
 
-                veiculoDTO.Id = id;
+                var foiAtualizado = await handler.UpdateVeiculoAsync(request);
 
-                await veiculoRepository.UpdateVeiculoAsync(veiculoDTO);
+                if (!foiAtualizado)
+                {
+                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                }
 
                 return Results.NoContent();
             }
