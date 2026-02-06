@@ -1,15 +1,15 @@
-using ParkingOnline.UI.Services;
-using ParkingOnline.UI.Services.Interfaces;
+using Scrutor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7049/api/") });
-builder.Services.AddScoped<ITarifaService, TarifaService>();
-builder.Services.AddScoped<IVagaService, VagaService>();
-builder.Services.AddScoped<IClienteService, ClienteService>();
-builder.Services.AddScoped<IVeiculoService, VeiculoService>();
-builder.Services.AddScoped<ITicketService, TicketService>();
+
+builder.Services.Scan(selector => selector.FromAssemblies(typeof(Program).Assembly)
+                                          .AddClasses(filter => filter.Where(type => type.Name.EndsWith("Service")), publicOnly: false)
+                                          .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                                          .AsMatchingInterface()
+                                          .WithScopedLifetime());
 
 var app = builder.Build();
 
