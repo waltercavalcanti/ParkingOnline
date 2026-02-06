@@ -1,6 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Tarifas;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.UpdateTarifa;
 
@@ -8,25 +6,21 @@ public class UpdateTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/tarifas/Update/{id}", async (int id, UpdateTarifaRequest request, ITarifaRepository tarifaRepository) =>
+        app.MapPut("/api/tarifas/Update/{id}", async (int id, UpdateTarifaRequest request, IUpdateTarifaHandler handler) =>
         {
             try
             {
-                var tarifaExists = await tarifaRepository.TarifaExists(id);
+                if (id != request.Id)
+                {
+                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                }
 
-                if (!tarifaExists)
+                var foiAtualizado = await handler.UpdateTarifaAsync(request);
+
+                if (!foiAtualizado)
                 {
                     return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
                 }
-
-                TarifaUpdateDTO tarifaDTO = new()
-                {
-                    Id = id,
-                    ValorInicial = request.ValorInicial,
-                    ValorPorHora = request.ValorPorHora
-                };
-
-                await tarifaRepository.UpdateTarifaAsync(tarifaDTO);
 
                 return Results.NoContent();
             }

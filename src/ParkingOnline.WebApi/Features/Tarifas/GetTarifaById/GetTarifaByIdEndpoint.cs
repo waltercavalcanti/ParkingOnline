@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.GetTarifaById;
 
@@ -7,13 +6,13 @@ public class GetTarifaByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/tarifas/GetById/{id}", async (int id, ITarifaRepository tarifaRepository) =>
+        app.MapGet("/api/tarifas/GetById/{id}", async (int id, IGetTarifaByIdHandler handler) =>
         {
-            var tarifa = await tarifaRepository.GetTarifaByIdAsync(id);
+            var response = await handler.GetTarifaByIdAsync(id);
 
-            return tarifa == null
+            return response.Tarifa == null
                 ? Results.NotFound($"Não há tarifa cadastrada com o id {id}.")
-                : Results.Ok(tarifa);
+                : Results.Ok(response.Tarifa);
         }).WithTags("Tarifa").WithName("GetTarifaById");
     }
 }

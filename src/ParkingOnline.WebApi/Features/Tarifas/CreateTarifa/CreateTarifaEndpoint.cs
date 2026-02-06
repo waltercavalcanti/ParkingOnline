@@ -1,6 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Tarifas;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.CreateTarifa;
 
@@ -8,17 +6,11 @@ public class CreateTarifaEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/tarifas/Add", async (CreateTarifaRequest request, ITarifaRepository tarifaRepository) =>
+        app.MapPost("/api/tarifas/Add", async (CreateTarifaRequest request, ICreateTarifaHandler handler) =>
         {
-            TarifaAddDTO tarifaDTO = new()
-            {
-                ValorInicial = request.ValorInicial,
-                ValorPorHora = request.ValorPorHora
-            };
+            var response = await handler.AddTarifaAsync(request);
 
-            var tarifa = await tarifaRepository.AddTarifaAsync(tarifaDTO);
-
-            return Results.CreatedAtRoute("GetTarifaById", new { id = tarifa.Id }, tarifa);
+            return Results.CreatedAtRoute("GetTarifaById", new { id = response.Id }, response);
         }).WithTags("Tarifa");
     }
 }

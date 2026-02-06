@@ -6,6 +6,11 @@ using ParkingOnline.WebApi.Features.Clientes.DeleteCliente;
 using ParkingOnline.WebApi.Features.Clientes.GetAllClientes;
 using ParkingOnline.WebApi.Features.Clientes.GetClienteById;
 using ParkingOnline.WebApi.Features.Clientes.UpdateCliente;
+using ParkingOnline.WebApi.Features.Tarifas.CreateTarifa;
+using ParkingOnline.WebApi.Features.Tarifas.DeleteTarifa;
+using ParkingOnline.WebApi.Features.Tarifas.GetAllTarifas;
+using ParkingOnline.WebApi.Features.Tarifas.GetTarifaById;
+using ParkingOnline.WebApi.Features.Tarifas.UpdateTarifa;
 using ParkingOnline.WebApi.Features.Vagas.CreateVaga;
 using ParkingOnline.WebApi.Features.Vagas.DeleteVaga;
 using ParkingOnline.WebApi.Features.Vagas.GetAllVagas;
@@ -44,6 +49,12 @@ public static class DependencyInjectionSetup
         services.AddScoped<IGetClienteByIdHandler, GetClienteByIdHandler>();
         services.AddScoped<IUpdateClienteHandler, UpdateClienteHandler>();
         services.AddScoped<IDeleteClienteHandler, DeleteClienteHandler>();
+
+        services.AddScoped<ICreateTarifaHandler, CreateTarifaHandler>();
+        services.AddScoped<IGetAllTarifasHandler, GetAllTarifasHandler>();
+        services.AddScoped<IGetTarifaByIdHandler, GetTarifaByIdHandler>();
+        services.AddScoped<IUpdateTarifaHandler, UpdateTarifaHandler>();
+        services.AddScoped<IDeleteTarifaHandler, DeleteTarifaHandler>();
 
         services.AddScoped<ICreateVagaHandler, CreateVagaHandler>();
         services.AddScoped<IGetAllVagasHandler, GetAllVagasHandler>();
