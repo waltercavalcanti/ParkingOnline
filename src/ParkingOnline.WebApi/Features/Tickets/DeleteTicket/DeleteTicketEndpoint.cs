@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Tickets.DeleteTicket;
 
@@ -7,18 +6,16 @@ public class DeleteTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/api/tickets/Delete/{id}", async (int id, ITicketRepository ticketRepository) =>
+        app.MapDelete("/api/tickets/Delete/{id}", async (int id, IDeleteTicketHandler handler) =>
         {
             try
             {
-                var ticketExists = await ticketRepository.TicketExists(id);
+                var foiDeletado = await handler.DeleteTicketAsync(id);
 
-                if (!ticketExists)
+                if (!foiDeletado)
                 {
                     return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
                 }
-
-                await ticketRepository.DeleteTicketAsync(id);
 
                 return Results.NoContent();
             }

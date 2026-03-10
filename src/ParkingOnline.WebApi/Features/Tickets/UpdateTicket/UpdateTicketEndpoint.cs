@@ -1,7 +1,6 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
-using ParkingOnline.WebApi.Dtos.Tickets;
-using ParkingOnline.WebApi.Dtos.Vagas;
+using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
+using ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
 
 namespace ParkingOnline.WebApi.Features.Tickets.UpdateTicket;
 
@@ -9,32 +8,37 @@ public class UpdateTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/tickets/Update/{id}", async (int id, UpdateTicketRequest request, ITicketRepository ticketRepository, IVagaRepository vagaRepository) =>
+        app.MapPut("/api/tickets/Update/{id}", async (int id, UpdateTicketRequest request, IUpdateTicketHandler handler, IGetTicketByIdHandler getTicketByIdHandler, IUpdateVagaHandler updateVagaHandler) =>
         {
             try
             {
-                var ticket = await ticketRepository.GetTicketByIdAsync(id);
+                if (id != request.Id)
+                {
+                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                }
 
-                if (ticket == null)
+                var response = await getTicketByIdHandler.GetTicketByIdAsync(id);
+
+                if (response == null || response.Ticket == null)
                 {
                     return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
                 }
 
-                var vaga = await vagaRepository.GetVagaByIdAsync(ticket.VagaId);
+                UpdateVagaRequest updateVagaRequest = new(response.Ticket.Vaga.Id, response.Ticket.Vaga.Localizacao, false);
 
-                await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
+                var foiAtualizado = await updateVagaHandler.UpdateVagaAsync(updateVagaRequest);
+
+                if (!foiAtualizado)
                 {
-                    Id = vaga.Id,
-                    Localizacao = vaga.Localizacao,
-                    Ocupada = false
-                });
+                    return Results.NotFound($"Não há vaga cadastrada com o id {response.Ticket.Vaga.Id}.");
+                }
 
-                TicketUpdateDTO ticketDTO = new()
+                foiAtualizado = await handler.UpdateTicketAsync(request);
+
+                if (!foiAtualizado)
                 {
-                    Id = id
-                };
-
-                await ticketRepository.UpdateTicketAsync(ticketDTO);
+                    return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                }
 
                 return Results.NoContent();
             }

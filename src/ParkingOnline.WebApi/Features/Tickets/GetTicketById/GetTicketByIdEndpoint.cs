@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 
@@ -7,13 +6,13 @@ public class GetTicketByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/tickets/GetById/{id}", async (int id, ITicketRepository ticketRepository) =>
+        app.MapGet("/api/tickets/GetById/{id}", async (int id, IGetTicketByIdHandler handler) =>
         {
-            var ticket = await ticketRepository.GetTicketByIdAsync(id);
+            var response = await handler.GetTicketByIdAsync(id);
 
-            return ticket == null
+            return response.Ticket == null
                 ? Results.NotFound($"Não há ticket cadastrado com o id {id}.")
-                : Results.Ok(ticket);
+                : Results.Ok(response.Ticket);
         }).WithTags("Ticket").WithName("GetTicketById");
     }
 }

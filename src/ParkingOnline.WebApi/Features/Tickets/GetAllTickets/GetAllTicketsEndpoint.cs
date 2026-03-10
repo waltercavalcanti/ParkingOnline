@@ -1,5 +1,4 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 
 namespace ParkingOnline.WebApi.Features.Tickets.GetAllTickets;
 
@@ -7,11 +6,11 @@ public class GetAllTicketsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/tickets/GetAll", async (ITicketRepository ticketRepository) =>
+        app.MapGet("/api/tickets/GetAll", async (IGetAllTicketsHandler handler) =>
         {
-            var tickets = await ticketRepository.GetAllTicketsAsync();
+            var response = await handler.GetAllTicketsAsync();
 
-            return Results.Ok(tickets);
+            return Results.Ok(response.Tickets);
         }).WithTags("Ticket");
     }
 }
