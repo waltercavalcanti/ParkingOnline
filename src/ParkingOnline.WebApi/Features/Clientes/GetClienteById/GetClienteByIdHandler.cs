@@ -13,7 +13,10 @@ public class GetClienteByIdHandler(IDbConnectionFactory dbConnectionFactory) : I
 {
     public async Task<GetClienteByIdResponse> GetClienteByIdAsync(int id)
     {
-        var query = GetClienteSqlQuery(true);
+        var query = @"SELECT C.*, V.*
+                      FROM Cliente C
+                      LEFT JOIN Veiculo V ON V.ClienteId = C.Id
+                      WHERE C.Id = @Id";
 
         var parameter = new
         {
@@ -23,16 +26,6 @@ public class GetClienteByIdHandler(IDbConnectionFactory dbConnectionFactory) : I
         var clientes = await QueryClientesAsync(query, parameter);
 
         return new GetClienteByIdResponse(clientes.FirstOrDefault());
-    }
-
-    private static string GetClienteSqlQuery(bool filtraPorId = false)
-    {
-        var query = @"SELECT C.*, V.*
-                      FROM Cliente C
-                      LEFT JOIN Veiculo V ON V.ClienteId = C.Id
-                      WHERE C.Id = @Id";
-
-        return filtraPorId ? query : query.Replace("WHERE C.Id = @Id", string.Empty);
     }
 
     private async Task<IEnumerable<Cliente>> QueryClientesAsync(string query, object? parameters = null)
