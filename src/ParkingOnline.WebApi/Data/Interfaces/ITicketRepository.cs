@@ -1,5 +1,5 @@
-﻿using ParkingOnline.WebApi.Dtos.Tickets;
-using ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Tickets;
+using ParkingOnline.WebApi.Dtos.Tickets;
 
 namespace ParkingOnline.WebApi.Data.Interfaces;
 

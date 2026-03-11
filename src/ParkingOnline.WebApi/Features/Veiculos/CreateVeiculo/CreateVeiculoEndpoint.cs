@@ -1,5 +1,6 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
@@ -14,7 +15,7 @@ public class CreateVeiculoEndpoint : ICarterModule
 
             if (!clienteExists)
             {
-                return Results.NotFound($"Não há cliente cadastrado com o id {request.ClienteId}.");
+                return Results.NotFound(ClienteErrors.NotFound(request.ClienteId).Description);
             }
 
             var response = await handler.AddVeiculoAsync(request);

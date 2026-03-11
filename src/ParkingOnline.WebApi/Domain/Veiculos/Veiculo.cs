@@ -1,6 +1,10 @@
-﻿namespace ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Clientes;
+using ParkingOnline.WebApi.Domain.Tickets;
+using ParkingOnline.WebApi.Shared;
 
-public class Veiculo : BaseEntity<int>
+namespace ParkingOnline.WebApi.Domain.Veiculos;
+
+public class Veiculo : Entity<int>
 {
     public string? Marca { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;
@@ -12,7 +13,7 @@ public class GetVeiculoByIdEndpoint : ICarterModule
             var response = await handler.GetVeiculoByIdAsync(id);
 
             return response.Veiculo == null
-                ? Results.NotFound($"Não há veículo cadastrado com o id {id}.")
+                ? Results.NotFound(VeiculoErrors.NotFound(id).Description)
                 : Results.Ok(response.Veiculo);
         }).WithTags(Tags.Veiculo).WithName("GetVeiculoById");
     }

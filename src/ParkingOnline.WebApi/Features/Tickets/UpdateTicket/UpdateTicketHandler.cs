@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using ParkingOnline.WebApi.Data;
-using ParkingOnline.WebApi.Entities;
+using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 using ParkingOnline.WebApi.Shared.Data;
 

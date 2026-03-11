@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.DeleteVeiculo;
@@ -15,7 +16,7 @@ public class DeleteVeiculoEndpoint : ICarterModule
 
                 if (!foiDeletado)
                 {
-                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                    return Results.NotFound(VeiculoErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

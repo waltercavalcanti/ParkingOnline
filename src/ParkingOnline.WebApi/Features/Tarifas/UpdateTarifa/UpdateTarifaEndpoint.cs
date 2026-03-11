@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.UpdateTarifa;
@@ -13,14 +14,14 @@ public class UpdateTarifaEndpoint : ICarterModule
             {
                 if (id != request.Id)
                 {
-                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                    return Results.BadRequest(TarifaErrors.IdDiscrepancy().Description);
                 }
 
                 var foiAtualizado = await handler.UpdateTarifaAsync(request);
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                    return Results.NotFound(TarifaErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

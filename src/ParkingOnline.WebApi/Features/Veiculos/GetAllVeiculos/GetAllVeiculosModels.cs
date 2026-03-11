@@ -1,4 +1,4 @@
-﻿using ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Veiculos;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetAllVeiculos;
 

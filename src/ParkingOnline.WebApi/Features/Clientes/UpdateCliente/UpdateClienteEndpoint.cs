@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.UpdateCliente;
@@ -13,14 +14,14 @@ public class UpdateClienteEndpoint : ICarterModule
             {
                 if (id != request.Id)
                 {
-                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                    return Results.BadRequest(ClienteErrors.IdDiscrepancy().Description);
                 }
 
                 var foiAtualizado = await handler.UpdateClienteAsync(request);
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há cliente cadastrado com o id {id}.");
+                    return Results.NotFound(ClienteErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

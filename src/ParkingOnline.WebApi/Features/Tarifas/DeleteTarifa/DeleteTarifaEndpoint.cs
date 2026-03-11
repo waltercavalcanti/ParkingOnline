@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.DeleteTarifa;
@@ -15,7 +16,7 @@ public class DeleteTarifaEndpoint : ICarterModule
 
                 if (!foiDeletado)
                 {
-                    return Results.NotFound($"Não há tarifa cadastrada com o id {id}.");
+                    return Results.NotFound(TarifaErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

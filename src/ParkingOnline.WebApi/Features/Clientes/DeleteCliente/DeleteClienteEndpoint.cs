@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.DeleteCliente;
@@ -15,7 +16,7 @@ public class DeleteClienteEndpoint : ICarterModule
 
                 if (!foiDeletado)
                 {
-                    return Results.NotFound($"Não há cliente cadastrado com o id {id}.");
+                    return Results.NotFound(ClienteErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

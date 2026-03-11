@@ -1,4 +1,6 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Tickets;
+using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 using ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
 using ParkingOnline.WebApi.Shared;
@@ -15,14 +17,14 @@ public class UpdateTicketEndpoint : ICarterModule
             {
                 if (id != request.Id)
                 {
-                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                    return Results.BadRequest(TicketErrors.IdDiscrepancy().Description);
                 }
 
                 var response = await getTicketByIdHandler.GetTicketByIdAsync(id);
 
                 if (response == null || response.Ticket == null)
                 {
-                    return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                    return Results.NotFound(TicketErrors.NotFound(id).Description);
                 }
 
                 UpdateVagaRequest updateVagaRequest = new(response.Ticket.Vaga.Id, response.Ticket.Vaga.Localizacao, false);
@@ -31,14 +33,14 @@ public class UpdateTicketEndpoint : ICarterModule
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há vaga cadastrada com o id {response.Ticket.Vaga.Id}.");
+                    return Results.NotFound(VagaErrors.NotFound(response.Ticket.Vaga.Id).Description);
                 }
 
                 foiAtualizado = await handler.UpdateTicketAsync(request);
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                    return Results.NotFound(TicketErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

@@ -1,5 +1,7 @@
 ﻿using Dapper;
-using ParkingOnline.WebApi.Entities;
+using ParkingOnline.WebApi.Domain.Clientes;
+using ParkingOnline.WebApi.Domain.Tickets;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;

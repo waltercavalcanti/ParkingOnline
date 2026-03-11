@@ -1,4 +1,4 @@
-﻿using ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Vagas;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagasLivres;
 

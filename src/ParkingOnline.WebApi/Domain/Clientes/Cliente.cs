@@ -1,6 +1,9 @@
-﻿namespace ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Veiculos;
+using ParkingOnline.WebApi.Shared;
 
-public class Cliente : BaseEntity<int>
+namespace ParkingOnline.WebApi.Domain.Clientes;
+
+public class Cliente : Entity<int>
 {
     public string? Nome { get; set; }
 

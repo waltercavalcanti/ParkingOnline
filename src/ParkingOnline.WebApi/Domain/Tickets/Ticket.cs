@@ -1,6 +1,10 @@
-﻿namespace ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Vagas;
+using ParkingOnline.WebApi.Domain.Veiculos;
+using ParkingOnline.WebApi.Shared;
 
-public class Ticket : BaseEntity<int>
+namespace ParkingOnline.WebApi.Domain.Tickets;
+
+public class Ticket : Entity<int>
 {
     public DateTime DataEntrada { get; set; }
 

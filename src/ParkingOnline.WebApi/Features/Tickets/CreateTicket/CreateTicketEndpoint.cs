@@ -1,5 +1,7 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Domain.Vagas;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Dtos.Vagas;
 using ParkingOnline.WebApi.Shared;
 
@@ -15,19 +17,19 @@ public class CreateTicketEndpoint : ICarterModule
 
             if (!veiculoExists)
             {
-                return Results.NotFound($"Não há veículo cadastrado com o id {request.VeiculoId}.");
+                return Results.NotFound(VeiculoErrors.NotFound(request.VeiculoId).Description);
             }
 
             var vaga = await vagaRepository.GetVagaByIdAsync(request.VagaId);
 
             if (vaga == null)
             {
-                return Results.NotFound($"Não há vaga cadastrada com o id {request.VagaId}.");
+                return Results.NotFound(VagaErrors.NotFound(request.VagaId).Description);
             }
 
             if (vaga.Ocupada)
             {
-                return Results.BadRequest($"A vaga com o id {vaga.Id} já está ocupada.");
+                return Results.BadRequest(VagaErrors.Ocupada(vaga.Id).Description);
             }
 
             await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO

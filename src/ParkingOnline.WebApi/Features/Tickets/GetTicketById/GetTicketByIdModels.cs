@@ -1,4 +1,4 @@
-﻿using ParkingOnline.WebApi.Entities;
+﻿using ParkingOnline.WebApi.Domain.Tickets;
 
 namespace ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 

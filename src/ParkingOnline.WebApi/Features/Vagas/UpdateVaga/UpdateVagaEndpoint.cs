@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
@@ -13,14 +14,14 @@ public class UpdateVagaEndpoint : ICarterModule
             {
                 if (id != request.Id)
                 {
-                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                    return Results.BadRequest(VagaErrors.IdDiscrepancy().Description);
                 }
 
                 var foiAtualizado = await handler.UpdateVagaAsync(request);
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há vaga cadastrada com o id {id}.");
+                    return Results.NotFound(VagaErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

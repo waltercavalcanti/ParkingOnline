@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.DeleteTicket;
@@ -15,7 +16,7 @@ public class DeleteTicketEndpoint : ICarterModule
 
                 if (!foiDeletado)
                 {
-                    return Results.NotFound($"Não há ticket cadastrado com o id {id}.");
+                    return Results.NotFound(TicketErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

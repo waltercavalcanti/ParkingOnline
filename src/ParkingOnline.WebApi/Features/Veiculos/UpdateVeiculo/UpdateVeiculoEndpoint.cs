@@ -1,5 +1,7 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Domain.Clientes;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
@@ -14,21 +16,21 @@ public class UpdateVeiculoEndpoint : ICarterModule
             {
                 if (id != request.Id)
                 {
-                    return Results.BadRequest("ID da rota não corresponde ao ID da requisição.");
+                    return Results.BadRequest(VeiculoErrors.IdDiscrepancy().Description);
                 }
 
                 var clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
 
                 if (!clienteExists)
                 {
-                    return Results.NotFound($"Não há cliente cadastrado com o id {request.ClienteId}.");
+                    return Results.NotFound(ClienteErrors.NotFound(request.ClienteId).Description);
                 }
 
                 var foiAtualizado = await handler.UpdateVeiculoAsync(request);
 
                 if (!foiAtualizado)
                 {
-                    return Results.NotFound($"Não há veículo cadastrado com o id {id}.");
+                    return Results.NotFound(VeiculoErrors.NotFound(id).Description);
                 }
 
                 return Results.NoContent();

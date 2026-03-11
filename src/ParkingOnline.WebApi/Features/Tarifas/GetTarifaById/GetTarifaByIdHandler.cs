@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using ParkingOnline.WebApi.Entities;
+using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.GetTarifaById;

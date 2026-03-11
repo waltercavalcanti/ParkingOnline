@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using ParkingOnline.WebApi.Entities;
+using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Vagas.DeleteVaga;
@@ -15,7 +15,7 @@ public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDele
     {
         if (await VagaOcupada(id))
         {
-            return new DeleteVagaResponse(false, true, "Não é possível deletar uma vaga que está ocupada.");
+            return new DeleteVagaResponse(false, true, VagaErrors.Ocupada(id).Description);
         }
 
         using var conexao = dbConnectionFactory.CreateConnection();
@@ -29,7 +29,7 @@ public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDele
         var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameter);
 
         return quantidadeLinhasAfetadas == 0
-            ? new DeleteVagaResponse(false, false, $"Não há vaga cadastrada com o id {id}.")
+            ? new DeleteVagaResponse(false, false, VagaErrors.NotFound(id).Description)
             : new DeleteVagaResponse(true, false, "Vaga deletada com sucesso.");
     }
 
