@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 
@@ -13,6 +14,6 @@ public class GetTicketByIdEndpoint : ICarterModule
             return response.Ticket == null
                 ? Results.NotFound($"Não há ticket cadastrado com o id {id}.")
                 : Results.Ok(response.Ticket);
-        }).WithTags("Ticket").WithName("GetTicketById");
+        }).WithTags(Tags.Ticket).WithName("GetTicketById");
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.DeleteVeiculo;
 
@@ -23,6 +24,6 @@ public class DeleteVeiculoEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Veiculo");
+        }).WithTags(Tags.Veiculo);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.DeleteTarifa;
 
@@ -23,6 +24,6 @@ public class DeleteTarifaEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Tarifa");
+        }).WithTags(Tags.Tarifa);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.DeleteCliente;
 
@@ -23,6 +24,6 @@ public class DeleteClienteEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Cliente");
+        }).WithTags(Tags.Cliente);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.CreateVaga;
 
@@ -11,6 +12,6 @@ public class CreateVagaEndpoint : ICarterModule
             var response = await handler.AddVagaAsync(request);
 
             return Results.CreatedAtRoute("GetVagaById", new { id = response.Id }, response);
-        }).WithTags("Vaga");
+        }).WithTags(Tags.Vaga);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagasLivres;
 
@@ -11,6 +12,6 @@ public class GetVagasLivresEndpoint : ICarterModule
             var response = await handler.GetVagasLivresAsync();
 
             return Results.Ok(response.Vagas);
-        }).WithTags("Vaga");
+        }).WithTags(Tags.Vaga);
     }
 }

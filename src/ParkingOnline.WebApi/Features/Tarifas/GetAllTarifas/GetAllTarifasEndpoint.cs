@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.GetAllTarifas;
 
@@ -11,6 +12,6 @@ public class GetAllTarifasEndpoint : ICarterModule
             var response = await handler.GetAllTarifasAsync();
 
             return Results.Ok(response.Tarifas);
-        }).WithTags("Tarifa");
+        }).WithTags(Tags.Tarifa);
     }
 }

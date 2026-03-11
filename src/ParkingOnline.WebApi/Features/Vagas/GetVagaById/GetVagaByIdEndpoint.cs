@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagaById;
 
@@ -13,6 +14,6 @@ public class GetVagaByIdEndpoint : ICarterModule
             return response.Vaga == null
                 ? Results.NotFound($"Não há vaga cadastrada com o id {id}.")
                 : Results.Ok(response.Vaga);
-        }).WithTags("Vaga").WithName("GetVagaById");
+        }).WithTags(Tags.Vaga).WithName("GetVagaById");
     }
 }

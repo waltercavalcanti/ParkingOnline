@@ -1,6 +1,7 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 using ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.UpdateTicket;
 
@@ -46,6 +47,6 @@ public class UpdateTicketEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Ticket");
+        }).WithTags(Tags.Ticket);
     }
 }

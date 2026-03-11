@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.GetTarifaById;
 
@@ -13,6 +14,6 @@ public class GetTarifaByIdEndpoint : ICarterModule
             return response.Tarifa == null
                 ? Results.NotFound($"Não há tarifa cadastrada com o id {id}.")
                 : Results.Ok(response.Tarifa);
-        }).WithTags("Tarifa").WithName("GetTarifaById");
+        }).WithTags(Tags.Tarifa).WithName("GetTarifaById");
     }
 }

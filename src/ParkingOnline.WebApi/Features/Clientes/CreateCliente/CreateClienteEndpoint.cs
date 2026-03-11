@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.CreateCliente;
 
@@ -11,6 +12,6 @@ public class CreateClienteEndpoint : ICarterModule
             var response = await handler.AddClienteAsync(request);
 
             return Results.CreatedAtRoute("GetClienteById", new { id = response.Id }, response);
-        }).WithTags("Cliente");
+        }).WithTags(Tags.Cliente);
     }
 }

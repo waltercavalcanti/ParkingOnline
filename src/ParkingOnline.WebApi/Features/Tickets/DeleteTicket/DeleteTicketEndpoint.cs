@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.DeleteTicket;
 
@@ -23,6 +24,6 @@ public class DeleteTicketEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Ticket");
+        }).WithTags(Tags.Ticket);
     }
 }

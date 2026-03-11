@@ -1,5 +1,6 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
 
@@ -19,6 +20,6 @@ public class CreateVeiculoEndpoint : ICarterModule
             var response = await handler.AddVeiculoAsync(request);
 
             return Results.CreatedAtRoute("GetVeiculoById", new { id = response.Id }, response);
-        }).WithTags("Veiculo");
+        }).WithTags(Tags.Veiculo);
     }
 }

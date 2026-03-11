@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
 
@@ -28,6 +29,6 @@ public class UpdateVagaEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Vaga");
+        }).WithTags(Tags.Vaga);
     }
 }

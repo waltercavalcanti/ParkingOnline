@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.GetClienteById;
 
@@ -13,6 +14,6 @@ public class GetClienteByIdEndpoint : ICarterModule
             return response.Cliente == null
                 ? Results.NotFound($"Não há cliente cadastrado com o id {id}.")
                 : Results.Ok(response.Cliente);
-        }).WithTags("Cliente").WithName("GetClienteById");
+        }).WithTags(Tags.Cliente).WithName("GetClienteById");
     }
 }

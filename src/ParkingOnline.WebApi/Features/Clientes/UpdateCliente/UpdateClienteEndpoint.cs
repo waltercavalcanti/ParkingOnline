@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.UpdateCliente;
 
@@ -28,6 +29,6 @@ public class UpdateClienteEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Cliente");
+        }).WithTags(Tags.Cliente);
     }
 }

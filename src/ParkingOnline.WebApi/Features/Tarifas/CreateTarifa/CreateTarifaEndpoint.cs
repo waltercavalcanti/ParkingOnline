@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.CreateTarifa;
 
@@ -11,6 +12,6 @@ public class CreateTarifaEndpoint : ICarterModule
             var response = await handler.AddTarifaAsync(request);
 
             return Results.CreatedAtRoute("GetTarifaById", new { id = response.Id }, response);
-        }).WithTags("Tarifa");
+        }).WithTags(Tags.Tarifa);
     }
 }

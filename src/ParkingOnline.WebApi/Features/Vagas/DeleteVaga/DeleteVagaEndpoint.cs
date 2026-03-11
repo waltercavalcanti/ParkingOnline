@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Vagas.DeleteVaga;
 
@@ -28,6 +29,6 @@ public class DeleteVagaEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Vaga");
+        }).WithTags(Tags.Vaga);
     }
 }

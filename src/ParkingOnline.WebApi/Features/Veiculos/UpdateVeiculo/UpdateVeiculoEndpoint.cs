@@ -1,5 +1,6 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
 
@@ -36,6 +37,6 @@ public class UpdateVeiculoEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Veiculo");
+        }).WithTags(Tags.Veiculo);
     }
 }

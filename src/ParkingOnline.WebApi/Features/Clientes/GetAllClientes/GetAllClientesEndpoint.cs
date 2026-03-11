@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Clientes.GetAllClientes;
 
@@ -11,6 +12,6 @@ public class GetAllClientesEndpoint : ICarterModule
             var response = await handler.GetAllClientesAsync();
 
             return Results.Ok(response.Clientes);
-        }).WithTags("Cliente");
+        }).WithTags(Tags.Cliente);
     }
 }

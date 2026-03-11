@@ -1,6 +1,7 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Data.Interfaces;
 using ParkingOnline.WebApi.Dtos.Vagas;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.CreateTicket;
 
@@ -39,6 +40,6 @@ public class CreateTicketEndpoint : ICarterModule
             var response = await handler.AddTicketAsync(request);
 
             return Results.CreatedAtRoute("GetTicketById", new { id = response.Id }, response);
-        }).WithTags("Ticket");
+        }).WithTags(Tags.Ticket);
     }
 }

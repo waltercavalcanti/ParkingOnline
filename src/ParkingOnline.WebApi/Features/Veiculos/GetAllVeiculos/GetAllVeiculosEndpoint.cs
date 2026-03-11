@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetAllVeiculos;
 
@@ -11,6 +12,6 @@ public class GetAllVeiculosEndpoint : ICarterModule
             var response = await handler.GetAllVeiculosAsync();
 
             return Results.Ok(response.Veiculos);
-        }).WithTags("Veiculo");
+        }).WithTags(Tags.Veiculo);
     }
 }

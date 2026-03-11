@@ -1,4 +1,5 @@
 ﻿using Carter;
+using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.UpdateTarifa;
 
@@ -28,6 +29,6 @@ public class UpdateTarifaEndpoint : ICarterModule
             {
                 return Results.BadRequest(ex.Message);
             }
-        }).WithTags("Tarifa");
+        }).WithTags(Tags.Tarifa);
     }
 }
