@@ -13,7 +13,11 @@ public class GetVeiculoByIdHandler(IDbConnectionFactory dbConnectionFactory) : I
 {
     public async Task<GetVeiculoByIdResponse> GetVeiculoByIdAsync(int id)
     {
-        var query = GetVeiculoSqlQuery(true);
+        var query = @"SELECT V.*, C.*, T.*
+                      FROM Veiculo V
+                      JOIN Cliente C ON C.Id = V.ClienteId
+                      LEFT JOIN Ticket T ON T.VeiculoId = V.Id
+                      WHERE V.Id = @Id";
 
         var parameter = new
         {
@@ -23,17 +27,6 @@ public class GetVeiculoByIdHandler(IDbConnectionFactory dbConnectionFactory) : I
         var veiculos = await QueryVeiculosAsync(query, parameter);
 
         return new GetVeiculoByIdResponse(veiculos.FirstOrDefault());
-    }
-
-    private static string GetVeiculoSqlQuery(bool filtraPorId = false)
-    {
-        var query = @"SELECT V.*, C.*, T.*
-                      FROM Veiculo V
-                      JOIN Cliente C ON C.Id = V.ClienteId
-                      LEFT JOIN Ticket T ON T.VeiculoId = V.Id
-                      WHERE V.Id = @Id";
-
-        return filtraPorId ? query : query.Replace("WHERE V.Id = @Id", string.Empty);
     }
 
     private async Task<IEnumerable<Veiculo>> QueryVeiculosAsync(string query, object? parameters = null)
