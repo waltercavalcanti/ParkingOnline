@@ -13,7 +13,12 @@ public class GetTicketByIdHandler(IDbConnectionFactory dbConnectionFactory) : IG
 {
     public async Task<GetTicketByIdResponse> GetTicketByIdAsync(int id)
     {
-        var query = GetTicketSqlQuery(true);
+        var query = @"SELECT T.*, VE.*, C.*, VA.*
+                      FROM Ticket T
+                      JOIN Veiculo VE ON VE.Id = T.VeiculoId
+                      JOIN Cliente C ON C.Id = VE.ClienteId
+                      JOIN Vaga VA ON VA.Id = T.VagaId
+                      WHERE T.Id = @Id";
 
         var parameter = new
         {
@@ -23,18 +28,6 @@ public class GetTicketByIdHandler(IDbConnectionFactory dbConnectionFactory) : IG
         var tickets = await QueryTicketsAsync(query, parameter);
 
         return new GetTicketByIdResponse(tickets.FirstOrDefault());
-    }
-
-    private static string GetTicketSqlQuery(bool filtraPorId = false)
-    {
-        var query = @"SELECT T.*, VE.*, C.*, VA.*
-                      FROM Ticket T
-                      JOIN Veiculo VE ON VE.Id = T.VeiculoId
-                      JOIN Cliente C ON C.Id = VE.ClienteId
-                      JOIN Vaga VA ON VA.Id = T.VagaId
-                      WHERE T.Id = @Id";
-
-        return filtraPorId ? query : query.Replace("WHERE T.Id = @Id", string.Empty);
     }
 
     private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
