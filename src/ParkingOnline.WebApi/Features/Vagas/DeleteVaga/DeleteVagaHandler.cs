@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
 
@@ -18,15 +19,14 @@ public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDele
             return new DeleteVagaResponse(false, true, VagaErrors.Ocupada(id).Description);
         }
 
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "DELETE FROM Vaga WHERE Id = @Id";
-        var parameter = new
+        string query = "DELETE FROM Vaga WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             Id = id
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameter);
+        });
 
         return quantidadeLinhasAfetadas == 0
             ? new DeleteVagaResponse(false, false, VagaErrors.NotFound(id).Description)
@@ -35,22 +35,21 @@ public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDele
 
     private async Task<bool> VagaOcupada(int id)
     {
-        var vaga = await GetVagaByIdAsync(id);
+        Vaga vaga = await GetVagaByIdAsync(id);
 
         return vaga.Ocupada;
     }
 
     private async Task<Vaga> GetVagaByIdAsync(int id)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "SELECT * FROM Vaga WHERE Id = @Id";
-        var parameter = new
+        string query = "SELECT * FROM Vaga WHERE Id = @Id";
+
+        Vaga? vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, new
         {
             Id = id
-        };
-
-        var vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, parameter);
+        });
 
         return vaga;
     }

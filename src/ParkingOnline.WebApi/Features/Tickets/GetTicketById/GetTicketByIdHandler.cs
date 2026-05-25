@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Domain.Vagas;
@@ -16,33 +17,31 @@ public class GetTicketByIdHandler(IDbConnectionFactory dbConnectionFactory) : IG
 {
     public async Task<GetTicketByIdResponse> GetTicketByIdAsync(int id)
     {
-        var query = @"SELECT T.*, VE.*, C.*, VA.*
+        string query = @"SELECT T.*, VE.*, C.*, VA.*
                       FROM Ticket T
                       JOIN Veiculo VE ON VE.Id = T.VeiculoId
                       JOIN Cliente C ON C.Id = VE.ClienteId
                       JOIN Vaga VA ON VA.Id = T.VagaId
                       WHERE T.Id = @Id";
 
-        var parameter = new
+        IEnumerable<Ticket> tickets = await QueryTicketsAsync(query, new
         {
             Id = id
-        };
-
-        var tickets = await QueryTicketsAsync(query, parameter);
+        });
 
         return new GetTicketByIdResponse(tickets.FirstOrDefault());
     }
 
     private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var ticketDictionary = new Dictionary<int, Ticket>();
+        Dictionary<int, Ticket> ticketDictionary = new();
 
-        var tickets = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
+        IEnumerable<Ticket> tickets = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
             (query, (ticket, veiculo, cliente, vaga) =>
             {
-                if (!ticketDictionary.TryGetValue(ticket.Id, out var currentTicket))
+                if (!ticketDictionary.TryGetValue(ticket.Id, out Ticket? currentTicket))
                 {
                     currentTicket = ticket;
                     currentTicket.Veiculo = veiculo;

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
 
@@ -13,15 +14,14 @@ public class GetVagaByIdHandler(IDbConnectionFactory dbConnectionFactory) : IGet
 {
     public async Task<GetVagaByIdResponse> GetVagaByIdAsync(int id)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "SELECT * FROM Vaga WHERE Id = @Id";
-        var parameter = new
+        string query = "SELECT * FROM Vaga WHERE Id = @Id";
+
+        Vaga? vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, new
         {
             Id = id
-        };
-
-        var vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, parameter);
+        });
 
         return new GetVagaByIdResponse(vaga);
     }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared.Data;
 
@@ -13,10 +14,10 @@ public class GetAllTarifasHandler(IDbConnectionFactory dbConnectionFactory) : IG
 {
     public async Task<GetAllTarifasResponse> GetAllTarifasAsync()
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "SELECT * FROM Tarifa";
-        var tarifas = await conexao.QueryAsync<Tarifa>(query);
+        string query = "SELECT * FROM Tarifa";
+        IEnumerable<Tarifa> tarifas = await conexao.QueryAsync<Tarifa>(query);
 
         return new GetAllTarifasResponse(tarifas.ToList());
     }

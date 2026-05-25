@@ -9,7 +9,7 @@ public class GetAllVeiculosEndpoint : ICarterModule
     {
         app.MapGet("/api/veiculos/GetAll", async (IGetAllVeiculosHandler handler) =>
         {
-            var response = await handler.GetAllVeiculosAsync();
+            GetAllVeiculosResponse response = await handler.GetAllVeiculosAsync();
 
             return Results.Ok(response.Veiculos);
         }).WithTags(Tags.Veiculo);

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
@@ -12,18 +13,17 @@ public class CreateVeiculoHandler(IDbConnectionFactory dbConnectionFactory) : IC
 {
     public async Task<CreateVeiculoResponse> AddVeiculoAsync(CreateVeiculoRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "INSERT INTO Veiculo (Marca, Modelo, Placa, ClienteId) OUTPUT INSERTED.Id VALUES (@Marca, @Modelo, @Placa, @ClienteId)";
-        var parameters = new
+        string query = "INSERT INTO Veiculo (Marca, Modelo, Placa, ClienteId) OUTPUT INSERTED.Id VALUES (@Marca, @Modelo, @Placa, @ClienteId)";
+
+        int id = await conexao.ExecuteScalarAsync<int>(query, new
         {
             request.Marca,
             request.Modelo,
             request.Placa,
             request.ClienteId
-        };
-
-        var id = await conexao.ExecuteScalarAsync<int>(query, parameters);
+        });
 
         return new CreateVeiculoResponse(id);
     }

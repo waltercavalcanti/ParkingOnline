@@ -9,7 +9,7 @@ public class CreateClienteEndpoint : ICarterModule
     {
         app.MapPost("/api/clientes/Add", async (CreateClienteRequest request, ICreateClienteHandler handler) =>
         {
-            var response = await handler.AddClienteAsync(request);
+            CreateClienteResponse response = await handler.AddClienteAsync(request);
 
             return Results.CreatedAtRoute("GetClienteById", new { id = response.Id }, response);
         }).WithTags(Tags.Cliente);

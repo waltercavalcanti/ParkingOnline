@@ -12,7 +12,7 @@ public class DeleteClienteEndpoint : ICarterModule
         {
             try
             {
-                var foiDeletado = await handler.DeleteClienteAsync(id);
+                bool foiDeletado = await handler.DeleteClienteAsync(id);
 
                 if (!foiDeletado)
                 {

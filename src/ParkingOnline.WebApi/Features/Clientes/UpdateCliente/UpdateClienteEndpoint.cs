@@ -17,7 +17,7 @@ public class UpdateClienteEndpoint : ICarterModule
                     return Results.BadRequest(ClienteErrors.IdDiscrepancy().Description);
                 }
 
-                var foiAtualizado = await handler.UpdateClienteAsync(request);
+                bool foiAtualizado = await handler.UpdateClienteAsync(request);
 
                 if (!foiAtualizado)
                 {

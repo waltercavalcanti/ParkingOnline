@@ -20,7 +20,7 @@ public class UpdateTicketEndpoint : ICarterModule
                     return Results.BadRequest(TicketErrors.IdDiscrepancy().Description);
                 }
 
-                var response = await getTicketByIdHandler.GetTicketByIdAsync(id);
+                GetTicketByIdResponse response = await getTicketByIdHandler.GetTicketByIdAsync(id);
 
                 if (response == null || response.Ticket == null)
                 {
@@ -29,7 +29,7 @@ public class UpdateTicketEndpoint : ICarterModule
 
                 UpdateVagaRequest updateVagaRequest = new(response.Ticket.Vaga.Id, response.Ticket.Vaga.Localizacao, false);
 
-                var foiAtualizado = await updateVagaHandler.UpdateVagaAsync(updateVagaRequest);
+                bool foiAtualizado = await updateVagaHandler.UpdateVagaAsync(updateVagaRequest);
 
                 if (!foiAtualizado)
                 {

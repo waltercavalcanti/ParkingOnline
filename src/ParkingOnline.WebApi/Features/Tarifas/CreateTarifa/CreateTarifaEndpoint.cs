@@ -9,7 +9,7 @@ public class CreateTarifaEndpoint : ICarterModule
     {
         app.MapPost("/api/tarifas/Add", async (CreateTarifaRequest request, ICreateTarifaHandler handler) =>
         {
-            var response = await handler.AddTarifaAsync(request);
+            CreateTarifaResponse response = await handler.AddTarifaAsync(request);
 
             return Results.CreatedAtRoute("GetTarifaById", new { id = response.Id }, response);
         }).WithTags(Tags.Tarifa);

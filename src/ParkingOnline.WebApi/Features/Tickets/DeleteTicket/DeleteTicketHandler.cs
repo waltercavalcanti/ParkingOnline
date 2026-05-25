@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Tickets.DeleteTicket;
@@ -12,15 +13,14 @@ public class DeleteTicketHandler(IDbConnectionFactory dbConnectionFactory) : IDe
 {
     public async Task<bool> DeleteTicketAsync(int id)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "DELETE FROM Ticket WHERE Id = @Id";
-        var parameter = new
+        string query = "DELETE FROM Ticket WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             Id = id
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameter);
+        });
 
         return quantidadeLinhasAfetadas > 0;
     }

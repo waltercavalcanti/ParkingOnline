@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Data.Interfaces;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Veiculos;
@@ -11,59 +12,55 @@ public class ClienteRepository(IDbConnectionFactory dbConnectionFactory) : IClie
 {
     public async Task<Cliente> AddClienteAsync(ClienteAddDTO clienteDTO)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "INSERT INTO Cliente (Nome, Telefone) OUTPUT INSERTED.Id VALUES (@Nome, @Telefone)";
-        var parameters = new
+        string query = "INSERT INTO Cliente (Nome, Telefone) OUTPUT INSERTED.Id VALUES (@Nome, @Telefone)";
+
+        int id = conexao.ExecuteScalarAsync<int>(query, new
         {
             clienteDTO.Nome,
             clienteDTO.Telefone
-        };
-
-        var id = conexao.ExecuteScalarAsync<int>(query, parameters).Result;
+        }).Result;
 
         return await GetClienteByIdAsync(id);
     }
 
     public async Task DeleteClienteAsync(int id)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "DELETE FROM Cliente WHERE Id = @Id";
-        var parameter = new
+        string query = "DELETE FROM Cliente WHERE Id = @Id";
+
+        await conexao.ExecuteAsync(query, new
         {
             Id = id
-        };
-
-        await conexao.ExecuteAsync(query, parameter);
+        });
     }
 
     public async Task<IEnumerable<Cliente>> GetAllClientesAsync()
     {
-        var query = GetClienteSqlQuery();
+        string query = GetClienteSqlQuery();
 
-        var clientes = await QueryClientesAsync(query);
+        IEnumerable<Cliente> clientes = await QueryClientesAsync(query);
 
         return clientes;
     }
 
     public async Task<Cliente> GetClienteByIdAsync(int id)
     {
-        var query = GetClienteSqlQuery(true);
+        string query = GetClienteSqlQuery(true);
 
-        var parameter = new
+        IEnumerable<Cliente> clientes = await QueryClientesAsync(query, new
         {
             Id = id
-        };
-
-        var clientes = await QueryClientesAsync(query, parameter);
+        });
 
         return clientes.FirstOrDefault();
     }
 
     private static string GetClienteSqlQuery(bool filtraPorId = false)
     {
-        var query = @"SELECT C.*, V.*
+        string query = @"SELECT C.*, V.*
                       FROM Cliente C
                       LEFT JOIN Veiculo V ON V.ClienteId = C.Id
                       WHERE C.Id = @Id";
@@ -73,14 +70,14 @@ public class ClienteRepository(IDbConnectionFactory dbConnectionFactory) : IClie
 
     private async Task<IEnumerable<Cliente>> QueryClientesAsync(string query, object? parameters = null)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var clienteDictionary = new Dictionary<int, Cliente>();
+        Dictionary<int, Cliente> clienteDictionary = new();
 
-        var clientes = await conexao.QueryAsync<Cliente, Veiculo, Cliente>
+        IEnumerable<Cliente> clientes = await conexao.QueryAsync<Cliente, Veiculo, Cliente>
             (query, (cliente, veiculo) =>
             {
-                if (!clienteDictionary.TryGetValue(cliente.Id, out var currentCliente))
+                if (!clienteDictionary.TryGetValue(cliente.Id, out Cliente? currentCliente))
                 {
                     currentCliente = cliente;
                     currentCliente.VeiculoId = veiculo?.Id;
@@ -100,22 +97,21 @@ public class ClienteRepository(IDbConnectionFactory dbConnectionFactory) : IClie
 
     public async Task UpdateClienteAsync(ClienteUpdateDTO clienteDTO)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "UPDATE Cliente SET Nome = @Nome, Telefone = @Telefone WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Cliente SET Nome = @Nome, Telefone = @Telefone WHERE Id = @Id";
+
+        await conexao.ExecuteAsync(query, new
         {
             clienteDTO.Id,
             clienteDTO.Nome,
             clienteDTO.Telefone
-        };
-
-        await conexao.ExecuteAsync(query, parameters);
+        });
     }
 
     public async Task<bool> ClienteExists(int id)
     {
-        var cliente = await GetClienteByIdAsync(id);
+        Cliente cliente = await GetClienteByIdAsync(id);
 
         return cliente != null;
     }

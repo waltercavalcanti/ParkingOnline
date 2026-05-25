@@ -10,7 +10,7 @@ public class GetClienteByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/clientes/GetById/{id}", async (int id, IGetClienteByIdHandler handler) =>
         {
-            var response = await handler.GetClienteByIdAsync(id);
+            GetClienteByIdResponse response = await handler.GetClienteByIdAsync(id);
 
             return response.Cliente == null
                 ? Results.NotFound(ClienteErrors.NotFound(id).Description)

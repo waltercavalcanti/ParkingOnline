@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Data;
 using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
@@ -15,29 +16,28 @@ public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory, IGetT
 {
     public async Task<bool> UpdateTicketAsync(UpdateTicketRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var dataEntrada = (await getTicketByIdHandler.GetTicketByIdAsync(request.Id)).Ticket.DataEntrada;
-        var dataSaida = DateTime.Now;
-        var tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
+        DateTime dataEntrada = (await getTicketByIdHandler.GetTicketByIdAsync(request.Id)).Ticket.DataEntrada;
+        DateTime dataSaida = DateTime.Now;
+        Tarifa tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
 
-        var query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             request.Id,
             DataSaida = dataSaida,
             Valor = CalcularValor(dataEntrada, dataSaida, tarifa)
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameters);
+        });
 
         return quantidadeLinhasAfetadas > 0;
     }
 
     private static decimal CalcularValor(DateTime dataEntrada, DateTime dataSaida, Tarifa tarifa)
     {
-        var diferenca = dataSaida - dataEntrada;
-        var qtdeHoras = (int)Math.Ceiling(diferenca.TotalHours);
+        TimeSpan diferenca = dataSaida - dataEntrada;
+        int qtdeHoras = (int)Math.Ceiling(diferenca.TotalHours);
 
         return tarifa.ValorInicial + (tarifa.ValorPorHora * qtdeHoras);
     }

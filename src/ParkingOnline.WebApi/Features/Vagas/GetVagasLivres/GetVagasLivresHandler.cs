@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
 
@@ -13,10 +14,10 @@ public class GetVagasLivresHandler(IDbConnectionFactory dbConnectionFactory) : I
 {
     public async Task<GetVagasLivresResponse> GetVagasLivresAsync()
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "SELECT * FROM Vaga WHERE Ocupada = 0";
-        var vagas = await conexao.QueryAsync<Vaga>(query);
+        string query = "SELECT * FROM Vaga WHERE Ocupada = 0";
+        IEnumerable<Vaga> vagas = await conexao.QueryAsync<Vaga>(query);
 
         return new GetVagasLivresResponse(vagas.ToList());
     }

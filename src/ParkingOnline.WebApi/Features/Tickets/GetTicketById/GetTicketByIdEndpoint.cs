@@ -10,7 +10,7 @@ public class GetTicketByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/tickets/GetById/{id}", async (int id, IGetTicketByIdHandler handler) =>
         {
-            var response = await handler.GetTicketByIdAsync(id);
+            GetTicketByIdResponse response = await handler.GetTicketByIdAsync(id);
 
             return response.Ticket == null
                 ? Results.NotFound(TicketErrors.NotFound(id).Description)

@@ -9,7 +9,7 @@ public class GetAllTarifasEndpoint : ICarterModule
     {
         app.MapGet("/api/tarifas/GetAll", async (IGetAllTarifasHandler handler) =>
         {
-            var response = await handler.GetAllTarifasAsync();
+            GetAllTarifasResponse response = await handler.GetAllTarifasAsync();
 
             return Results.Ok(response.Tarifas);
         }).WithTags(Tags.Tarifa);

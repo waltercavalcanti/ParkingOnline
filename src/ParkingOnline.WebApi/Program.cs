@@ -2,7 +2,7 @@ using Carter;
 using ParkingOnline.WebApi;
 using ParkingOnline.WebApi.Startup;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<AppSettings>(appSettings =>
 {
@@ -10,7 +10,7 @@ builder.Services.Configure<AppSettings>(appSettings =>
 });
 builder.Services.RegistrarServicos();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.ConfigurarScalar();
 

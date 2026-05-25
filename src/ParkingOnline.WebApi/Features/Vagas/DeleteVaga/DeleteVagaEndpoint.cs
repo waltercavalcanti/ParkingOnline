@@ -11,7 +11,7 @@ public class DeleteVagaEndpoint : ICarterModule
         {
             try
             {
-                var response = await handler.DeleteVagaAsync(id);
+                DeleteVagaResponse response = await handler.DeleteVagaAsync(id);
 
                 if (response.VagaOcupada)
                 {

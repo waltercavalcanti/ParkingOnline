@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
@@ -12,19 +13,18 @@ public class UpdateVeiculoHandler(IDbConnectionFactory dbConnectionFactory) : IU
 {
     public async Task<bool> UpdateVeiculoAsync(UpdateVeiculoRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "UPDATE Veiculo SET Marca = @Marca, Modelo = @Modelo, Placa = @Placa, ClienteId = @ClienteId WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Veiculo SET Marca = @Marca, Modelo = @Modelo, Placa = @Placa, ClienteId = @ClienteId WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             request.Id,
             request.Marca,
             request.Modelo,
             request.Placa,
             request.ClienteId
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameters);
+        });
 
         return quantidadeLinhasAfetadas > 0;
     }

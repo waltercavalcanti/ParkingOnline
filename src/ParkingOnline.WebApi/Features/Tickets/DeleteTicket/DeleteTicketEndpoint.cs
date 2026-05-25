@@ -12,7 +12,7 @@ public class DeleteTicketEndpoint : ICarterModule
         {
             try
             {
-                var foiDeletado = await handler.DeleteTicketAsync(id);
+                bool foiDeletado = await handler.DeleteTicketAsync(id);
 
                 if (!foiDeletado)
                 {

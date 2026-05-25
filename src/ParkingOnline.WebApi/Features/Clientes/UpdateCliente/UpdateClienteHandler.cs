@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Clientes.UpdateCliente;
@@ -12,17 +13,16 @@ public class UpdateClienteHandler(IDbConnectionFactory dbConnectionFactory) : IU
 {
     public async Task<bool> UpdateClienteAsync(UpdateClienteRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "UPDATE Cliente SET Nome = @Nome, Telefone = @Telefone WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Cliente SET Nome = @Nome, Telefone = @Telefone WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             request.Id,
             request.Nome,
             request.Telefone
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameters);
+        });
 
         return quantidadeLinhasAfetadas > 0;
     }

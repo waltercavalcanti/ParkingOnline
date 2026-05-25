@@ -10,7 +10,7 @@ public class GetTarifaByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/tarifas/GetById/{id}", async (int id, IGetTarifaByIdHandler handler) =>
         {
-            var response = await handler.GetTarifaByIdAsync(id);
+            GetTarifaByIdResponse response = await handler.GetTarifaByIdAsync(id);
 
             return response.Tarifa == null
                 ? Results.NotFound(TarifaErrors.NotFound(id).Description)

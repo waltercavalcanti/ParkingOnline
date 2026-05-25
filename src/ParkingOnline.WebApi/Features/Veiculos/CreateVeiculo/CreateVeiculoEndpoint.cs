@@ -11,14 +11,14 @@ public class CreateVeiculoEndpoint : ICarterModule
     {
         app.MapPost("/api/veiculos/Add", async (CreateVeiculoRequest request, ICreateVeiculoHandler handler, IClienteRepository clienteRepository) =>
         {
-            var clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
+            bool clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
 
             if (!clienteExists)
             {
                 return Results.NotFound(ClienteErrors.NotFound(request.ClienteId).Description);
             }
 
-            var response = await handler.AddVeiculoAsync(request);
+            CreateVeiculoResponse response = await handler.AddVeiculoAsync(request);
 
             return Results.CreatedAtRoute("GetVeiculoById", new { id = response.Id }, response);
         }).WithTags(Tags.Veiculo);

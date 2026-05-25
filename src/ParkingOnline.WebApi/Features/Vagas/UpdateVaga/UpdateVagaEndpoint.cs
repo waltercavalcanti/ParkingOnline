@@ -17,7 +17,7 @@ public class UpdateVagaEndpoint : ICarterModule
                     return Results.BadRequest(VagaErrors.IdDiscrepancy().Description);
                 }
 
-                var foiAtualizado = await handler.UpdateVagaAsync(request);
+                bool foiAtualizado = await handler.UpdateVagaAsync(request);
 
                 if (!foiAtualizado)
                 {

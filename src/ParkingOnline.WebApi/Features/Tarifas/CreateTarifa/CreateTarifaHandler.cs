@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.CreateTarifa;
@@ -12,16 +13,15 @@ public class CreateTarifaHandler(IDbConnectionFactory dbConnectionFactory) : ICr
 {
     public async Task<CreateTarifaResponse> AddTarifaAsync(CreateTarifaRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "INSERT INTO Tarifa (ValorInicial, ValorPorHora) OUTPUT INSERTED.Id VALUES (@ValorInicial, @ValorPorHora)";
-        var parameters = new
+        string query = "INSERT INTO Tarifa (ValorInicial, ValorPorHora) OUTPUT INSERTED.Id VALUES (@ValorInicial, @ValorPorHora)";
+
+        int id = await conexao.ExecuteScalarAsync<int>(query, new
         {
             request.ValorInicial,
             request.ValorPorHora
-        };
-
-        var id = await conexao.ExecuteScalarAsync<int>(query, parameters);
+        });
 
         return new CreateTarifaResponse(id);
     }

@@ -19,14 +19,14 @@ public class UpdateVeiculoEndpoint : ICarterModule
                     return Results.BadRequest(VeiculoErrors.IdDiscrepancy().Description);
                 }
 
-                var clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
+                bool clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
 
                 if (!clienteExists)
                 {
                     return Results.NotFound(ClienteErrors.NotFound(request.ClienteId).Description);
                 }
 
-                var foiAtualizado = await handler.UpdateVeiculoAsync(request);
+                bool foiAtualizado = await handler.UpdateVeiculoAsync(request);
 
                 if (!foiAtualizado)
                 {

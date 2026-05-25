@@ -9,7 +9,7 @@ public class GetAllVagasEndpoint : ICarterModule
     {
         app.MapGet("/api/vagas/GetAll", async (IGetAllVagasHandler handler) =>
         {
-            var response = await handler.GetAllVagasAsync();
+            GetAllVagasResponse response = await handler.GetAllVagasAsync();
 
             return Results.Ok(response.Vagas);
         }).WithTags(Tags.Vaga);

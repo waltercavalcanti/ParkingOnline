@@ -9,7 +9,7 @@ public class CreateVagaEndpoint : ICarterModule
     {
         app.MapPost("/api/vagas/Add", async (CreateVagaRequest request, ICreateVagaHandler handler) =>
         {
-            var response = await handler.AddVagaAsync(request);
+            CreateVagaResponse response = await handler.AddVagaAsync(request);
 
             return Results.CreatedAtRoute("GetVagaById", new { id = response.Id }, response);
         }).WithTags(Tags.Vaga);

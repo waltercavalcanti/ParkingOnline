@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.UpdateTarifa;
@@ -12,17 +13,16 @@ public class UpdateTarifaHandler(IDbConnectionFactory dbConnectionFactory) : IUp
 {
     public async Task<bool> UpdateTarifaAsync(UpdateTarifaRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "UPDATE Tarifa SET ValorInicial = @ValorInicial, ValorPorHora = @ValorPorHora WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Tarifa SET ValorInicial = @ValorInicial, ValorPorHora = @ValorPorHora WHERE Id = @Id";
+
+        int quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, new
         {
             request.Id,
             request.ValorInicial,
             request.ValorPorHora
-        };
-
-        var quantidadeLinhasAfetadas = await conexao.ExecuteAsync(query, parameters);
+        });
 
         return quantidadeLinhasAfetadas > 0;
     }

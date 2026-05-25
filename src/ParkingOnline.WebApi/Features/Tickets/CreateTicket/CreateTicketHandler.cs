@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Shared.Data;
 
 namespace ParkingOnline.WebApi.Features.Tickets.CreateTicket;
@@ -12,17 +13,16 @@ public class CreateTicketHandler(IDbConnectionFactory dbConnectionFactory) : ICr
 {
     public async Task<CreateTicketResponse> AddTicketAsync(CreateTicketRequest request)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
-        var parameters = new
+        string query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
+
+        int id = await conexao.ExecuteScalarAsync<int>(query, new
         {
             DataEntrada = DateTime.Now,
             request.VeiculoId,
             request.VagaId
-        };
-
-        var id = await conexao.ExecuteScalarAsync<int>(query, parameters);
+        });
 
         return new CreateTicketResponse(id);
     }

@@ -12,7 +12,7 @@ public class DeleteTarifaEndpoint : ICarterModule
         {
             try
             {
-                var foiDeletado = await handler.DeleteTarifaAsync(id);
+                bool foiDeletado = await handler.DeleteTarifaAsync(id);
 
                 if (!foiDeletado)
                 {

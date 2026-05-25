@@ -17,7 +17,7 @@ public class UpdateTarifaEndpoint : ICarterModule
                     return Results.BadRequest(TarifaErrors.IdDiscrepancy().Description);
                 }
 
-                var foiAtualizado = await handler.UpdateTarifaAsync(request);
+                bool foiAtualizado = await handler.UpdateTarifaAsync(request);
 
                 if (!foiAtualizado)
                 {

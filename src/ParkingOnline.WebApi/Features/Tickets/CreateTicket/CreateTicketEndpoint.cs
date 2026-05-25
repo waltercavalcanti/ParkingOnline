@@ -13,14 +13,14 @@ public class CreateTicketEndpoint : ICarterModule
     {
         app.MapPost("/api/tickets/Add", async (CreateTicketRequest request, ICreateTicketHandler handler, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) =>
         {
-            var veiculoExists = await veiculoRepository.VeiculoExists(request.VeiculoId);
+            bool veiculoExists = await veiculoRepository.VeiculoExists(request.VeiculoId);
 
             if (!veiculoExists)
             {
                 return Results.NotFound(VeiculoErrors.NotFound(request.VeiculoId).Description);
             }
 
-            var vaga = await vagaRepository.GetVagaByIdAsync(request.VagaId);
+            Vaga vaga = await vagaRepository.GetVagaByIdAsync(request.VagaId);
 
             if (vaga == null)
             {
@@ -39,7 +39,7 @@ public class CreateTicketEndpoint : ICarterModule
                 Ocupada = true
             });
 
-            var response = await handler.AddTicketAsync(request);
+            CreateTicketResponse response = await handler.AddTicketAsync(request);
 
             return Results.CreatedAtRoute("GetTicketById", new { id = response.Id }, response);
         }).WithTags(Tags.Ticket);

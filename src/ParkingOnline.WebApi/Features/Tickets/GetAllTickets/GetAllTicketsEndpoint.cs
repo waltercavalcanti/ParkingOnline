@@ -9,7 +9,7 @@ public class GetAllTicketsEndpoint : ICarterModule
     {
         app.MapGet("/api/tickets/GetAll", async (IGetAllTicketsHandler handler) =>
         {
-            var response = await handler.GetAllTicketsAsync();
+            GetAllTicketsResponse response = await handler.GetAllTicketsAsync();
 
             return Results.Ok(response.Tickets);
         }).WithTags(Tags.Ticket);

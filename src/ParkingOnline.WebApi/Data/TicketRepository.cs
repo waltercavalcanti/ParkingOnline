@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Data.Interfaces;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Tarifas;
@@ -14,60 +15,57 @@ public class TicketRepository(IDbConnectionFactory dbConnectionFactory) : ITicke
 {
     public async Task<Ticket> AddTicketAsync(TicketAddDTO ticketDTO)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
-        var parameters = new
+        string query = "INSERT INTO Ticket (DataEntrada, VeiculoId, VagaId) OUTPUT INSERTED.Id VALUES (@DataEntrada, @VeiculoId, @VagaId)";
+
+        int id = conexao.ExecuteScalarAsync<int>(query, new
         {
             DataEntrada = DateTime.Now,
             ticketDTO.VeiculoId,
             ticketDTO.VagaId
-        };
-
-        var id = conexao.ExecuteScalarAsync<int>(query, parameters).Result;
+        }).Result;
 
         return await GetTicketByIdAsync(id);
     }
 
     public async Task DeleteTicketAsync(int id)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var query = "DELETE FROM Ticket WHERE Id = @Id";
-        var parameter = new
+        string query = "DELETE FROM Ticket WHERE Id = @Id";
+
+        await conexao.ExecuteAsync(query, new
         {
             Id = id
-        };
-
-        await conexao.ExecuteAsync(query, parameter);
+        });
     }
 
     public async Task<IEnumerable<Ticket>> GetAllTicketsAsync()
     {
-        var query = GetTicketSqlQuery();
+        string query = GetTicketSqlQuery();
 
-        var tickets = await QueryTicketsAsync(query);
+        IEnumerable<Ticket> tickets = await QueryTicketsAsync(query);
 
         return tickets;
     }
 
     public async Task<Ticket> GetTicketByIdAsync(int id)
     {
-        var query = GetTicketSqlQuery(true);
+        string query = GetTicketSqlQuery(true);
 
-        var parameter = new
+
+        IEnumerable<Ticket> tickets = await QueryTicketsAsync(query, new
         {
             Id = id
-        };
-
-        var tickets = await QueryTicketsAsync(query, parameter);
+        });
 
         return tickets.FirstOrDefault();
     }
 
     private static string GetTicketSqlQuery(bool filtraPorId = false)
     {
-        var query = @"SELECT T.*, VE.*, C.*, VA.*
+        string query = @"SELECT T.*, VE.*, C.*, VA.*
                       FROM Ticket T
                       JOIN Veiculo VE ON VE.Id = T.VeiculoId
                       JOIN Cliente C ON C.Id = VE.ClienteId
@@ -79,14 +77,14 @@ public class TicketRepository(IDbConnectionFactory dbConnectionFactory) : ITicke
 
     private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var ticketDictionary = new Dictionary<int, Ticket>();
+        Dictionary<int, Ticket> ticketDictionary = new();
 
-        var tickets = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
+        IEnumerable<Ticket> tickets = await conexao.QueryAsync<Ticket, Veiculo, Cliente, Vaga, Ticket>
             (query, (ticket, veiculo, cliente, vaga) =>
             {
-                if (!ticketDictionary.TryGetValue(ticket.Id, out var currentTicket))
+                if (!ticketDictionary.TryGetValue(ticket.Id, out Ticket? currentTicket))
                 {
                     currentTicket = ticket;
                     currentTicket.Veiculo = veiculo;
@@ -108,34 +106,33 @@ public class TicketRepository(IDbConnectionFactory dbConnectionFactory) : ITicke
 
     public async Task UpdateTicketAsync(TicketUpdateDTO ticketDTO)
     {
-        using var conexao = dbConnectionFactory.CreateConnection();
+        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        var dataEntrada = (await GetTicketByIdAsync(ticketDTO.Id)).DataEntrada;
-        var dataSaida = DateTime.Now;
-        var tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
+        DateTime dataEntrada = (await GetTicketByIdAsync(ticketDTO.Id)).DataEntrada;
+        DateTime dataSaida = DateTime.Now;
+        Tarifa tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
 
-        var query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
-        var parameters = new
+        string query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
+
+        await conexao.ExecuteAsync(query, new
         {
             ticketDTO.Id,
             DataSaida = dataSaida,
             Valor = CalcularValor(dataEntrada, dataSaida, tarifa)
-        };
-
-        await conexao.ExecuteAsync(query, parameters);
+        });
     }
 
     private static decimal CalcularValor(DateTime dataEntrada, DateTime dataSaida, Tarifa tarifa)
     {
-        var diferenca = dataSaida - dataEntrada;
-        var qtdeHoras = (int)Math.Ceiling(diferenca.TotalHours);
+        TimeSpan diferenca = dataSaida - dataEntrada;
+        int qtdeHoras = (int)Math.Ceiling(diferenca.TotalHours);
 
         return tarifa.ValorInicial + (tarifa.ValorPorHora * qtdeHoras);
     }
 
     public async Task<bool> TicketExists(int id)
     {
-        var ticket = await GetTicketByIdAsync(id);
+        Ticket ticket = await GetTicketByIdAsync(id);
 
         return ticket != null;
     }

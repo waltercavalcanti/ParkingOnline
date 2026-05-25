@@ -10,7 +10,7 @@ public class GetVeiculoByIdEndpoint : ICarterModule
     {
         app.MapGet("/api/veiculos/GetById/{id}", async (int id, IGetVeiculoByIdHandler handler) =>
         {
-            var response = await handler.GetVeiculoByIdAsync(id);
+            GetVeiculoByIdResponse response = await handler.GetVeiculoByIdAsync(id);
 
             return response.Veiculo == null
                 ? Results.NotFound(VeiculoErrors.NotFound(id).Description)

@@ -9,7 +9,7 @@ public class GetAllClientesEndpoint : ICarterModule
     {
         app.MapGet("/api/clientes/GetAll", async (IGetAllClientesHandler handler) =>
         {
-            var response = await handler.GetAllClientesAsync();
+            GetAllClientesResponse response = await handler.GetAllClientesAsync();
 
             return Results.Ok(response.Clientes);
         }).WithTags(Tags.Cliente);
