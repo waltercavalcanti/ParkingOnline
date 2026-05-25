@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Tarifas";
-    var tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
+    int tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
 }
 
 <h1>Tarifas</h1>
@@ -29,7 +29,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (TarifaModel? item in Model)
         {
             <tr>
                 <td>
@@ -40,7 +40,7 @@
                 </td>
                 <td>
                     @{
-                        var modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
+                        string? modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
                     }
                     @Html.ActionLink("Editar", "Edit", "Tarifa", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" }) |
                     <input type="button" value="Excluir" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#@modalConfirmarExclusao" />

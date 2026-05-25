@@ -8,14 +8,14 @@ public class TicketController(ITicketService ticketService, IVeiculoService veic
 {
     public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var tickets = ticketService.GetAllTicketsAsync().Result.AsQueryable();
+        IQueryable<TicketModel> tickets = ticketService.GetAllTicketsAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
             tickets = tickets.Where(t => t.Veiculo.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        var listaPaginada = ListaPaginada<TicketModel>.Create(tickets, indicePagina, tamanhoPagina);
+        ListaPaginada<TicketModel> listaPaginada = ListaPaginada<TicketModel>.Create(tickets, indicePagina, tamanhoPagina);
         ViewData["FiltroAtual"] = filtro;
         ViewData["TamanhoPagina"] = tamanhoPagina;
         return View(listaPaginada);
@@ -23,10 +23,10 @@ public class TicketController(ITicketService ticketService, IVeiculoService veic
 
     public IActionResult Create(int id)
     {
-        var veiculoModel = veiculoService.GetVeiculoByIdAsync(id).Result;
-        var vagasModel = vagaService.GetVagasLivresAsync().Result;
+        VeiculoModel veiculoModel = veiculoService.GetVeiculoByIdAsync(id).Result;
+        IEnumerable<VagaModel> vagasModel = vagaService.GetVagasLivresAsync().Result;
 
-        var ticketModel = new TicketModel()
+        TicketModel ticketModel = new()
         {
             VeiculoId = id,
             Veiculo = veiculoModel,
@@ -58,7 +58,7 @@ public class TicketController(ITicketService ticketService, IVeiculoService veic
     {
         try
         {
-            var ticket = ticketService.GetTicketByIdAsync(id).Result;
+            TicketModel ticket = ticketService.GetTicketByIdAsync(id).Result;
 
             ticketService.UpdateTicketAsync(id, ticket).Wait();
 

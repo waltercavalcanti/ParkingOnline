@@ -8,14 +8,14 @@ public class VeiculoController(IVeiculoService veiculoService, IClienteService c
 {
     public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var veiculos = veiculoService.GetAllVeiculosAsync().Result.AsQueryable();
+        IQueryable<VeiculoModel> veiculos = veiculoService.GetAllVeiculosAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
             veiculos = veiculos.Where(v => v.Placa.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        var listaPaginada = ListaPaginada<VeiculoModel>.Create(veiculos, indicePagina, tamanhoPagina);
+        ListaPaginada<VeiculoModel> listaPaginada = ListaPaginada<VeiculoModel>.Create(veiculos, indicePagina, tamanhoPagina);
         ViewData["FiltroAtual"] = filtro;
         ViewData["TamanhoPagina"] = tamanhoPagina;
         return View(listaPaginada);
@@ -23,14 +23,14 @@ public class VeiculoController(IVeiculoService veiculoService, IClienteService c
 
     public IActionResult Create(int id)
     {
-        var clienteModel = clienteService.GetClienteByIdAsync(id).Result;
+        ClienteModel clienteModel = clienteService.GetClienteByIdAsync(id).Result;
 
         if (string.IsNullOrWhiteSpace(clienteModel.Nome))
         {
             clienteModel.Nome = "Cliente não informou o nome.";
         }
 
-        var veiculoModel = new VeiculoModel()
+        VeiculoModel veiculoModel = new()
         {
             Placa = string.Empty,
             ClienteId = id,
@@ -58,7 +58,7 @@ public class VeiculoController(IVeiculoService veiculoService, IClienteService c
 
     public IActionResult Edit(int id)
     {
-        var veiculo = veiculoService.GetVeiculoByIdAsync(id).Result;
+        VeiculoModel veiculo = veiculoService.GetVeiculoByIdAsync(id).Result;
 
         if (string.IsNullOrWhiteSpace(veiculo.Cliente.Nome))
         {

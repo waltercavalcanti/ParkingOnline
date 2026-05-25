@@ -7,24 +7,24 @@ public class TarifaService(HttpClient httpClient) : ITarifaService
 {
     public async Task AddTarifaAsync(TarifaModel tarifaModel)
     {
-        using var _ = await httpClient.PostAsJsonAsync("tarifas/Add", tarifaModel);
+        using HttpResponseMessage _ = await httpClient.PostAsJsonAsync("tarifas/Add", tarifaModel);
     }
 
     public async Task DeleteTarifaAsync(int id)
     {
-        using var _ = await httpClient.DeleteAsync($"tarifas/Delete/{id}");
+        using HttpResponseMessage _ = await httpClient.DeleteAsync($"tarifas/Delete/{id}");
     }
 
     public async Task<IEnumerable<TarifaModel>> GetAllTarifasAsync()
     {
-        var tarifas = await httpClient.GetFromJsonAsync<List<TarifaModel>>("tarifas/GetAll");
+        List<TarifaModel>? tarifas = await httpClient.GetFromJsonAsync<List<TarifaModel>>("tarifas/GetAll");
 
         return tarifas ?? [];
     }
 
     public async Task<TarifaModel> GetTarifaByIdAsync(int id)
     {
-        var tarifa = await httpClient.GetFromJsonAsync<TarifaModel>($"tarifas/GetById/{id}");
+        TarifaModel? tarifa = await httpClient.GetFromJsonAsync<TarifaModel>($"tarifas/GetById/{id}");
 
         if (tarifa is null)
         {
@@ -36,6 +36,6 @@ public class TarifaService(HttpClient httpClient) : ITarifaService
 
     public async Task UpdateTarifaAsync(int id, TarifaModel tarifaModel)
     {
-        using var _ = await httpClient.PutAsJsonAsync($"tarifas/Update/{id}", tarifaModel);
+        using HttpResponseMessage _ = await httpClient.PutAsJsonAsync($"tarifas/Update/{id}", tarifaModel);
     }
 }

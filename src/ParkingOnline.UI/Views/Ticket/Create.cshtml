@@ -22,7 +22,7 @@
                 <label asp-for="VagaId" class="control-label"></label>
                 <select asp-for="VagaId" class="form-select">
                     <option value="0">Selecione uma vaga</option>
-                    @foreach (var vaga in Model.Vagas)
+                    @foreach (VagaModel? vaga in Model.Vagas)
                     {
                         <option value="@vaga.Id">@vaga.Localizacao</option>
                     }

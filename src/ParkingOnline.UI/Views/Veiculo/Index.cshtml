@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Veículos";
-    var filtroAtual = ViewData["FiltroAtual"] as string;
-    var tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
+    string? filtroAtual = ViewData["FiltroAtual"] as string;
+    int tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
 }
 
 <h1>Veículos</h1>
@@ -42,7 +42,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (VeiculoModel? item in Model)
         {
             <tr>
                 <td>
@@ -56,7 +56,7 @@
                 </td>
                 <td>
                     @{
-                        var dadosCliente = item.Cliente.Telefone;
+                        string? dadosCliente = item.Cliente.Telefone;
 
                         if (!string.IsNullOrWhiteSpace(item.Cliente.Nome))
                         {
@@ -78,7 +78,7 @@
                 </td>
                 <td>
                     @{
-                        var modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
+                        string? modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
                     }
                     @Html.ActionLink("Editar", "Edit", "Veiculo", new { id = item.Id }, new { @class = "btn btn-outline-primary btn-sm" }) |
                     <input type="button" value="Excluir" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#@modalConfirmarExclusao" />

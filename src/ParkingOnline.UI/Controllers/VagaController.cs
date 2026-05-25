@@ -8,14 +8,14 @@ public class VagaController(IVagaService vagaService) : BaseController
 {
     public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var vagas = vagaService.GetAllVagasAsync().Result.AsQueryable();
+        IQueryable<VagaModel> vagas = vagaService.GetAllVagasAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
             vagas = vagas.Where(v => v.Localizacao.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        var listaPaginada = ListaPaginada<VagaModel>.Create(vagas, indicePagina, tamanhoPagina);
+        ListaPaginada<VagaModel> listaPaginada = ListaPaginada<VagaModel>.Create(vagas, indicePagina, tamanhoPagina);
         ViewData["FiltroAtual"] = filtro;
         ViewData["TamanhoPagina"] = tamanhoPagina;
         return View(listaPaginada);
@@ -44,7 +44,7 @@ public class VagaController(IVagaService vagaService) : BaseController
 
     public IActionResult Edit(int id)
     {
-        var vaga = vagaService.GetVagaByIdAsync(id).Result;
+        VagaModel vaga = vagaService.GetVagaByIdAsync(id).Result;
 
         return View(vaga);
     }

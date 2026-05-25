@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Tickets";
-    var filtroAtual = ViewData["FiltroAtual"] as string;
-    var tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
+    string? filtroAtual = ViewData["FiltroAtual"] as string;
+    int tamanhoPagina = ViewData["TamanhoPagina"] != null ? (int)ViewData["TamanhoPagina"] : 10;
 }
 
 <h1>Tickets</h1>
@@ -45,7 +45,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (TicketModel? item in Model)
         {
             <tr>
                 <td>
@@ -78,7 +78,7 @@
                 </td>
                 <td>
                     @{
-                        var modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
+                        string? modalConfirmarExclusao = $"modalConfirmarExclusao{item.Id}";
                     }
                     <input type="button" value="Excluir" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#@modalConfirmarExclusao" />
                     <div class="modal fade" id="@modalConfirmarExclusao" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

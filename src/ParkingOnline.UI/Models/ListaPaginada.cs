@@ -19,8 +19,8 @@ public class ListaPaginada<T> : List<T>
 
     public static ListaPaginada<T> Create(IQueryable<T> fonte, int indicePagina, int tamanhoPagina)
     {
-        var count = fonte.Count();
-        var items = fonte.Skip((indicePagina - 1) * tamanhoPagina).Take(tamanhoPagina).ToList();
+        int count = fonte.Count();
+        List<T> items = fonte.Skip((indicePagina - 1) * tamanhoPagina).Take(tamanhoPagina).ToList();
         return new ListaPaginada<T>(items, count, indicePagina, tamanhoPagina);
     }
 }

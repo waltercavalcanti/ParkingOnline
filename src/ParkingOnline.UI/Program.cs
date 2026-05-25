@@ -1,6 +1,6 @@
 using Scrutor;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7049/api/") });
@@ -11,7 +11,7 @@ builder.Services.Scan(selector => selector.FromAssemblies(typeof(Program).Assemb
                                           .AsMatchingInterface()
                                           .WithScopedLifetime());
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {

@@ -8,14 +8,14 @@ public class ClienteController(IClienteService clienteService) : BaseController
 {
     public IActionResult Index(string filtro, int indicePagina = 1)
     {
-        var clientes = clienteService.GetAllClientesAsync().Result.AsQueryable();
+        IQueryable<ClienteModel> clientes = clienteService.GetAllClientesAsync().Result.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filtro))
         {
             clientes = clientes.Where(c => c.Nome != null && c.Nome.Contains(filtro, StringComparison.OrdinalIgnoreCase)).AsQueryable();
         }
 
-        var listaPaginada = ListaPaginada<ClienteModel>.Create(clientes, indicePagina, tamanhoPagina);
+        ListaPaginada<ClienteModel> listaPaginada = ListaPaginada<ClienteModel>.Create(clientes, indicePagina, tamanhoPagina);
         ViewData["FiltroAtual"] = filtro;
         ViewData["TamanhoPagina"] = tamanhoPagina;
         return View(listaPaginada);
@@ -44,7 +44,7 @@ public class ClienteController(IClienteService clienteService) : BaseController
 
     public IActionResult Edit(int id)
     {
-        var cliente = clienteService.GetClienteByIdAsync(id).Result;
+        ClienteModel cliente = clienteService.GetClienteByIdAsync(id).Result;
 
         return View(cliente);
     }

@@ -8,9 +8,9 @@ public class TarifaController(ITarifaService tarifaService) : BaseController
 {
     public IActionResult Index(int indicePagina = 1)
     {
-        var tarifas = tarifaService.GetAllTarifasAsync().Result.AsQueryable();
+        IQueryable<TarifaModel> tarifas = tarifaService.GetAllTarifasAsync().Result.AsQueryable();
 
-        var listaPaginada = ListaPaginada<TarifaModel>.Create(tarifas, indicePagina, tamanhoPagina);
+        ListaPaginada<TarifaModel> listaPaginada = ListaPaginada<TarifaModel>.Create(tarifas, indicePagina, tamanhoPagina);
         ViewData["TamanhoPagina"] = tamanhoPagina;
         return View(listaPaginada);
     }
@@ -38,7 +38,7 @@ public class TarifaController(ITarifaService tarifaService) : BaseController
 
     public IActionResult Edit(int id)
     {
-        var tarifa = tarifaService.GetTarifaByIdAsync(id).Result;
+        TarifaModel tarifa = tarifaService.GetTarifaByIdAsync(id).Result;
 
         return View(tarifa);
     }
