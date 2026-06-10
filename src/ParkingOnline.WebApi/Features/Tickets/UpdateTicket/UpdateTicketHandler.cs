@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using ParkingOnline.WebApi.Data;
 using ParkingOnline.WebApi.Domain.Tarifas;
+using ParkingOnline.WebApi.Features.Tarifas.GetAllTarifas;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 using ParkingOnline.WebApi.Shared.Data;
 
@@ -12,7 +12,7 @@ public interface IUpdateTicketHandler
     Task<bool> UpdateTicketAsync(UpdateTicketRequest request);
 }
 
-public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory, IGetTicketByIdHandler getTicketByIdHandler) : IUpdateTicketHandler
+public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory, IGetTicketByIdHandler getTicketByIdHandler, IGetAllTarifasHandler getAllTarifasHandler) : IUpdateTicketHandler
 {
     public async Task<bool> UpdateTicketAsync(UpdateTicketRequest request)
     {
@@ -20,7 +20,10 @@ public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory, IGetT
 
         DateTime dataEntrada = (await getTicketByIdHandler.GetTicketByIdAsync(request.Id)).Ticket.DataEntrada;
         DateTime dataSaida = DateTime.Now;
-        Tarifa tarifa = await new TarifaRepository(dbConnectionFactory).GetTarifaAtualAsync();
+
+        GetAllTarifasResponse getAllTarifasResponse = await getAllTarifasHandler.GetAllTarifasAsync();
+
+        Tarifa? tarifa = getAllTarifasResponse.Tarifas.OrderByDescending(tarifa => tarifa.Id).FirstOrDefault();
 
         string query = "UPDATE Ticket SET DataSaida = @DataSaida, Valor = @Valor WHERE Id = @Id";
 

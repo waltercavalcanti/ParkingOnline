@@ -1,8 +1,9 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Domain.Veiculos;
-using ParkingOnline.WebApi.Dtos.Vagas;
+using ParkingOnline.WebApi.Features.Vagas.GetVagaById;
+using ParkingOnline.WebApi.Features.Vagas.UpdateVaga;
+using ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Tickets.CreateTicket;
@@ -11,33 +12,32 @@ public class CreateTicketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/tickets/Add", async (CreateTicketRequest request, ICreateTicketHandler handler, IVeiculoRepository veiculoRepository, IVagaRepository vagaRepository) =>
+        app.MapPost("/api/tickets/Add", async (CreateTicketRequest request,
+                                               ICreateTicketHandler handler,
+                                               IGetVeiculoByIdHandler getVeiculoByIdHandler,
+                                               IGetVagaByIdHandler getVagaByIdHandler,
+                                               IUpdateVagaHandler updateVagaHandler) =>
         {
-            bool veiculoExists = await veiculoRepository.VeiculoExists(request.VeiculoId);
+            GetVeiculoByIdResponse getVeiculoByIdResponse = await getVeiculoByIdHandler.GetVeiculoByIdAsync(request.VeiculoId);
 
-            if (!veiculoExists)
+            if (getVeiculoByIdResponse is null || getVeiculoByIdResponse.Veiculo is null)
             {
                 return Results.NotFound(VeiculoErrors.NotFound(request.VeiculoId).Description);
             }
 
-            Vaga vaga = await vagaRepository.GetVagaByIdAsync(request.VagaId);
+            GetVagaByIdResponse getVagaByIdResponse = await getVagaByIdHandler.GetVagaByIdAsync(request.VagaId);
 
-            if (vaga == null)
+            if (getVagaByIdResponse is null || getVagaByIdResponse.Vaga is null)
             {
                 return Results.NotFound(VagaErrors.NotFound(request.VagaId).Description);
             }
 
-            if (vaga.Ocupada)
+            if (getVagaByIdResponse.Vaga.Ocupada)
             {
-                return Results.BadRequest(VagaErrors.Ocupada(vaga.Id).Description);
+                return Results.BadRequest(VagaErrors.Ocupada(getVagaByIdResponse.Vaga.Id).Description);
             }
 
-            await vagaRepository.UpdateVagaAsync(new VagaUpdateDTO
-            {
-                Id = vaga.Id,
-                Localizacao = vaga.Localizacao,
-                Ocupada = true
-            });
+            await updateVagaHandler.UpdateVagaAsync(new UpdateVagaRequest(getVagaByIdResponse.Vaga.Id, getVagaByIdResponse.Vaga.Localizacao, true));
 
             CreateTicketResponse response = await handler.AddTicketAsync(request);
 

@@ -1,7 +1,7 @@
 ﻿using Carter;
-using ParkingOnline.WebApi.Data.Interfaces;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Veiculos;
+using ParkingOnline.WebApi.Features.Clientes.GetClienteById;
 using ParkingOnline.WebApi.Shared;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.UpdateVeiculo;
@@ -10,7 +10,7 @@ public class UpdateVeiculoEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/veiculos/Update/{id}", async (int id, UpdateVeiculoRequest request, IUpdateVeiculoHandler handler, IClienteRepository clienteRepository) =>
+        app.MapPut("/api/veiculos/Update/{id}", async (int id, UpdateVeiculoRequest request, IUpdateVeiculoHandler handler, IGetClienteByIdHandler getClienteByIdHandler) =>
         {
             try
             {
@@ -19,9 +19,9 @@ public class UpdateVeiculoEndpoint : ICarterModule
                     return Results.BadRequest(VeiculoErrors.IdDiscrepancy().Description);
                 }
 
-                bool clienteExists = await clienteRepository.ClienteExists(request.ClienteId);
+                GetClienteByIdResponse clienteResponse = await getClienteByIdHandler.GetClienteByIdAsync(request.ClienteId);
 
-                if (!clienteExists)
+                if (clienteResponse is null || clienteResponse.Cliente is null)
                 {
                     return Results.NotFound(ClienteErrors.NotFound(request.ClienteId).Description);
                 }
