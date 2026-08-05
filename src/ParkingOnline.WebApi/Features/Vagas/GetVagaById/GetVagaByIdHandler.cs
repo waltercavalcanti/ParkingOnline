@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Vagas.GetVagaById;
 
@@ -10,19 +11,24 @@ public interface IGetVagaByIdHandler
     Task<GetVagaByIdResponse> GetVagaByIdAsync(int id);
 }
 
-public class GetVagaByIdHandler(IDbConnectionFactory dbConnectionFactory) : IGetVagaByIdHandler
+public class GetVagaByIdHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetVagaByIdHandler
 {
     public async Task<GetVagaByIdResponse> GetVagaByIdAsync(int id)
     {
-        using SqlConnection conexao = dbConnectionFactory.CreateConnection();
-
-        string query = "SELECT * FROM Vaga WHERE Id = @Id";
-
-        Vaga? vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, new
+        GetVagaByIdResponse getVagaByIdResponse = await cache.GetOrSetAsync(VagaCacheKeys.GetVagaById(id), async token =>
         {
-            Id = id
-        });
+            using SqlConnection conexao = dbConnectionFactory.CreateConnection();
 
-        return new GetVagaByIdResponse(vaga);
+            string query = "SELECT * FROM Vaga WHERE Id = @Id";
+
+            Vaga? vaga = await conexao.QueryFirstOrDefaultAsync<Vaga>(query, new
+            {
+                Id = id
+            });
+
+            return new GetVagaByIdResponse(vaga);
+        }, token: CancellationToken.None);
+
+        return getVagaByIdResponse;
     }
 }

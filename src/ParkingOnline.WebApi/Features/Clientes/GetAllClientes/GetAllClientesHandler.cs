@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Clientes.GetAllClientes;
 
@@ -11,17 +12,22 @@ public interface IGetAllClientesHandler
     Task<GetAllClientesResponse> GetAllClientesAsync();
 }
 
-public class GetAllClientesHandler(IDbConnectionFactory dbConnectionFactory) : IGetAllClientesHandler
+public class GetAllClientesHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetAllClientesHandler
 {
     public async Task<GetAllClientesResponse> GetAllClientesAsync()
     {
-        string query = @"SELECT C.*, V.*
-                      FROM Cliente C
-                      LEFT JOIN Veiculo V ON V.ClienteId = C.Id";
+        GetAllClientesResponse getAllClientesResponse = await cache.GetOrSetAsync(ClienteCacheKeys.GetAllClientes(), async token =>
+        {
+            string query = @"SELECT C.*, V.*
+                             FROM Cliente C
+                             LEFT JOIN Veiculo V ON V.ClienteId = C.Id";
 
-        IEnumerable<Cliente> clientes = await QueryClientesAsync(query);
+            IEnumerable<Cliente> clientes = await QueryClientesAsync(query);
 
-        return new GetAllClientesResponse(clientes);
+            return new GetAllClientesResponse(clientes);
+        }, token: CancellationToken.None);
+
+        return getAllClientesResponse;
     }
 
     private async Task<IEnumerable<Cliente>> QueryClientesAsync(string query, object? parameters = null)

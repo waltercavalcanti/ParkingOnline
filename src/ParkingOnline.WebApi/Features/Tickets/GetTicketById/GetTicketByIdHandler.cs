@@ -5,6 +5,7 @@ using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 
@@ -13,23 +14,28 @@ public interface IGetTicketByIdHandler
     Task<GetTicketByIdResponse> GetTicketByIdAsync(int id);
 }
 
-public class GetTicketByIdHandler(IDbConnectionFactory dbConnectionFactory) : IGetTicketByIdHandler
+public class GetTicketByIdHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetTicketByIdHandler
 {
     public async Task<GetTicketByIdResponse> GetTicketByIdAsync(int id)
     {
-        string query = @"SELECT T.*, VE.*, C.*, VA.*
-                      FROM Ticket T
-                      JOIN Veiculo VE ON VE.Id = T.VeiculoId
-                      JOIN Cliente C ON C.Id = VE.ClienteId
-                      JOIN Vaga VA ON VA.Id = T.VagaId
-                      WHERE T.Id = @Id";
-
-        IEnumerable<Ticket> tickets = await QueryTicketsAsync(query, new
+        GetTicketByIdResponse getTicketByIdResponse = await cache.GetOrSetAsync(TicketCacheKeys.GetTicketById(id), async token =>
         {
-            Id = id
-        });
+            string query = @"SELECT T.*, VE.*, C.*, VA.*
+                             FROM Ticket T
+                             JOIN Veiculo VE ON VE.Id = T.VeiculoId
+                             JOIN Cliente C ON C.Id = VE.ClienteId
+                             JOIN Vaga VA ON VA.Id = T.VagaId
+                             WHERE T.Id = @Id";
 
-        return new GetTicketByIdResponse(tickets.FirstOrDefault());
+            IEnumerable<Ticket> tickets = await QueryTicketsAsync(query, new
+            {
+                Id = id
+            });
+
+            return new GetTicketByIdResponse(tickets.FirstOrDefault());
+        }, token: CancellationToken.None);
+
+        return getTicketByIdResponse;
     }
 
     private async Task<IEnumerable<Ticket>> QueryTicketsAsync(string query, object? parameters = null)
