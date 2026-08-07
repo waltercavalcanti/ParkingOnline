@@ -3,7 +3,6 @@ using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Clientes.GetClienteById;
 
@@ -12,26 +11,22 @@ public interface IGetClienteByIdHandler
     Task<GetClienteByIdResponse> GetClienteByIdAsync(int id);
 }
 
-public class GetClienteByIdHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetClienteByIdHandler
+public class GetClienteByIdHandler(IDbConnectionFactory dbConnectionFactory) : IGetClienteByIdHandler
 {
     public async Task<GetClienteByIdResponse> GetClienteByIdAsync(int id)
     {
-        GetClienteByIdResponse getClienteByIdResponse = await cache.GetOrSetAsync(ClienteCacheKeys.GetClienteById(id), async token =>
+        string query = @"SELECT C.*, V.*
+                      FROM Cliente C
+                      LEFT JOIN Veiculo V ON V.ClienteId = C.Id
+                      WHERE C.Id = @Id";
+
+
+        IEnumerable<Cliente> clientes = await QueryClientesAsync(query, new
         {
-            string query = @"SELECT C.*, V.*
-                             FROM Cliente C
-                             LEFT JOIN Veiculo V ON V.ClienteId = C.Id
-                             WHERE C.Id = @Id";
+            Id = id
+        });
 
-            IEnumerable<Cliente> clientes = await QueryClientesAsync(query, new
-            {
-                Id = id
-            });
-
-            return new GetClienteByIdResponse(clientes.FirstOrDefault());
-        }, token: CancellationToken.None);
-
-        return getClienteByIdResponse;
+        return new GetClienteByIdResponse(clientes.FirstOrDefault());
     }
 
     private async Task<IEnumerable<Cliente>> QueryClientesAsync(string query, object? parameters = null)

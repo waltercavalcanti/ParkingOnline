@@ -1,7 +1,6 @@
 ﻿using Carter;
 using ParkingOnline.WebApi.Shared.Data;
 using Scrutor;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Startup;
 
@@ -32,17 +31,6 @@ public static class DependencyInjectionSetup
         services.AddOpenApi();
 
         services.AddCarter();
-        services.AddFusionCache()
-                .WithOptions(options =>
-                {
-                    options.DefaultEntryOptions.Duration = TimeSpan.FromMinutes(5);
-                    options.DefaultEntryOptions.DistributedCacheDuration = TimeSpan.FromMinutes(5);
-                })
-                .WithDefaultEntryOptions(options =>
-                {
-                    options.Duration = TimeSpan.FromMinutes(5);
-                    options.DistributedCacheDuration = TimeSpan.FromMinutes(5);
-                });
 
         return services;
     }

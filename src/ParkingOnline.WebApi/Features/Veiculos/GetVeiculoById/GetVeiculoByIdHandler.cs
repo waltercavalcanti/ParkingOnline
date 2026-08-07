@@ -4,7 +4,6 @@ using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetVeiculoById;
 
@@ -13,27 +12,22 @@ public interface IGetVeiculoByIdHandler
     Task<GetVeiculoByIdResponse> GetVeiculoByIdAsync(int id);
 }
 
-public class GetVeiculoByIdHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetVeiculoByIdHandler
+public class GetVeiculoByIdHandler(IDbConnectionFactory dbConnectionFactory) : IGetVeiculoByIdHandler
 {
     public async Task<GetVeiculoByIdResponse> GetVeiculoByIdAsync(int id)
     {
-        GetVeiculoByIdResponse getVeiculoByIdResponse = await cache.GetOrSetAsync(VeiculoCacheKeys.GetVeiculoById(id), async token =>
+        string query = @"SELECT V.*, C.*, T.*
+                      FROM Veiculo V
+                      JOIN Cliente C ON C.Id = V.ClienteId
+                      LEFT JOIN Ticket T ON T.VeiculoId = V.Id
+                      WHERE V.Id = @Id";
+
+        IEnumerable<Veiculo> veiculos = await QueryVeiculosAsync(query, new
         {
-            string query = @"SELECT V.*, C.*, T.*
-                             FROM Veiculo V
-                             JOIN Cliente C ON C.Id = V.ClienteId
-                             LEFT JOIN Ticket T ON T.VeiculoId = V.Id
-                             WHERE V.Id = @Id";
+            Id = id
+        });
 
-            IEnumerable<Veiculo> veiculos = await QueryVeiculosAsync(query, new
-            {
-                Id = id
-            });
-
-            return new GetVeiculoByIdResponse(veiculos.FirstOrDefault());
-        }, token: CancellationToken.None);
-
-        return getVeiculoByIdResponse;
+        return new GetVeiculoByIdResponse(veiculos.FirstOrDefault());
     }
 
     private async Task<IEnumerable<Veiculo>> QueryVeiculosAsync(string query, object? parameters = null)

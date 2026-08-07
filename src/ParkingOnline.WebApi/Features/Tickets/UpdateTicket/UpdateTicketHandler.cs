@@ -1,11 +1,9 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Tarifas;
-using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Features.Tarifas.GetAllTarifas;
 using ParkingOnline.WebApi.Features.Tickets.GetTicketById;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Tickets.UpdateTicket;
 
@@ -14,10 +12,7 @@ public interface IUpdateTicketHandler
     Task<bool> UpdateTicketAsync(UpdateTicketRequest request);
 }
 
-public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory,
-                                 IGetTicketByIdHandler getTicketByIdHandler,
-                                 IGetAllTarifasHandler getAllTarifasHandler,
-                                 IFusionCache cache) : IUpdateTicketHandler
+public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory, IGetTicketByIdHandler getTicketByIdHandler, IGetAllTarifasHandler getAllTarifasHandler) : IUpdateTicketHandler
 {
     public async Task<bool> UpdateTicketAsync(UpdateTicketRequest request)
     {
@@ -38,8 +33,6 @@ public class UpdateTicketHandler(IDbConnectionFactory dbConnectionFactory,
             DataSaida = dataSaida,
             Valor = CalcularValor(dataEntrada, dataSaida, tarifa)
         });
-
-        await cache.RemoveAsync(TicketCacheKeys.GetTicketById(request.Id), token: CancellationToken.None);
 
         return quantidadeLinhasAfetadas > 0;
     }

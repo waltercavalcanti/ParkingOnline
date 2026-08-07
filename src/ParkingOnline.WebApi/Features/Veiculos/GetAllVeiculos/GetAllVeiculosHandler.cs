@@ -4,7 +4,6 @@ using ParkingOnline.WebApi.Domain.Clientes;
 using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.GetAllVeiculos;
 
@@ -13,23 +12,18 @@ public interface IGetAllVeiculosHandler
     Task<GetAllVeiculosResponse> GetAllVeiculosAsync();
 }
 
-public class GetAllVeiculosHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IGetAllVeiculosHandler
+public class GetAllVeiculosHandler(IDbConnectionFactory dbConnectionFactory) : IGetAllVeiculosHandler
 {
     public async Task<GetAllVeiculosResponse> GetAllVeiculosAsync()
     {
-        GetAllVeiculosResponse getAllVeiculosResponse = await cache.GetOrSetAsync(VeiculoCacheKeys.GetAllVeiculos(), async token =>
-        {
-            string query = @"SELECT V.*, C.*, T.*
-                             FROM Veiculo V
-                             JOIN Cliente C ON C.Id = V.ClienteId
-                             LEFT JOIN Ticket T ON T.VeiculoId = V.Id";
+        string query = @"SELECT V.*, C.*, T.*
+                      FROM Veiculo V
+                      JOIN Cliente C ON C.Id = V.ClienteId
+                      LEFT JOIN Ticket T ON T.VeiculoId = V.Id";
 
-            IEnumerable<Veiculo> veiculos = await QueryVeiculosAsync(query);
+        IEnumerable<Veiculo> veiculos = await QueryVeiculosAsync(query);
 
-            return new GetAllVeiculosResponse(veiculos);
-        }, token: CancellationToken.None);
-
-        return getAllVeiculosResponse;
+        return new GetAllVeiculosResponse(veiculos);
     }
 
     private async Task<IEnumerable<Veiculo>> QueryVeiculosAsync(string query, object? parameters = null)

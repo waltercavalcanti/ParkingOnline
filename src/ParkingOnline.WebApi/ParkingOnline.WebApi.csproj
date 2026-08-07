@@ -8,7 +8,6 @@
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="Scrutor" />
-    <PackageReference Include="ZiggyCreatures.FusionCache" />
   </ItemGroup>
 
 </Project>

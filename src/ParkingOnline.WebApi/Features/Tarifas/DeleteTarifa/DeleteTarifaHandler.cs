@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.DeleteTarifa;
 
@@ -11,7 +9,7 @@ public interface IDeleteTarifaHandler
     Task<bool> DeleteTarifaAsync(int id);
 }
 
-public class DeleteTarifaHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IDeleteTarifaHandler
+public class DeleteTarifaHandler(IDbConnectionFactory dbConnectionFactory) : IDeleteTarifaHandler
 {
     public async Task<bool> DeleteTarifaAsync(int id)
     {
@@ -23,8 +21,6 @@ public class DeleteTarifaHandler(IDbConnectionFactory dbConnectionFactory, IFusi
         {
             Id = id
         });
-
-        await cache.RemoveAsync(TarifaCacheKeys.GetTarifaById(id), token: CancellationToken.None);
 
         return quantidadeLinhasAfetadas > 0;
     }

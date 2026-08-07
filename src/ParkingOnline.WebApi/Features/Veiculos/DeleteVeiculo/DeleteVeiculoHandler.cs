@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.DeleteVeiculo;
 
@@ -11,7 +9,7 @@ public interface IDeleteVeiculoHandler
     Task<bool> DeleteVeiculoAsync(int id);
 }
 
-public class DeleteVeiculoHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IDeleteVeiculoHandler
+public class DeleteVeiculoHandler(IDbConnectionFactory dbConnectionFactory) : IDeleteVeiculoHandler
 {
     public async Task<bool> DeleteVeiculoAsync(int id)
     {
@@ -23,8 +21,6 @@ public class DeleteVeiculoHandler(IDbConnectionFactory dbConnectionFactory, IFus
         {
             Id = id
         });
-
-        await cache.RemoveAsync(VeiculoCacheKeys.GetVeiculoById(id), token: CancellationToken.None);
 
         return quantidadeLinhasAfetadas > 0;
     }
