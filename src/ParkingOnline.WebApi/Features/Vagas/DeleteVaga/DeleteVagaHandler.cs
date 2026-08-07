@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Vagas.DeleteVaga;
 
@@ -10,7 +11,7 @@ public interface IDeleteVagaHandler
     Task<DeleteVagaResponse> DeleteVagaAsync(int id);
 }
 
-public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDeleteVagaHandler
+public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : IDeleteVagaHandler
 {
     public async Task<DeleteVagaResponse> DeleteVagaAsync(int id)
     {
@@ -27,6 +28,8 @@ public class DeleteVagaHandler(IDbConnectionFactory dbConnectionFactory) : IDele
         {
             Id = id
         });
+
+        await cache.RemoveAsync(VagaCacheKeys.GetVagaById(id), token: CancellationToken.None);
 
         return quantidadeLinhasAfetadas == 0
             ? new DeleteVagaResponse(false, false, VagaErrors.NotFound(id).Description)
