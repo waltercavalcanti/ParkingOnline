@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using ParkingOnline.WebApi.Domain.Tarifas;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Tarifas.CreateTarifa;
 
@@ -9,7 +11,7 @@ public interface ICreateTarifaHandler
     Task<CreateTarifaResponse> AddTarifaAsync(CreateTarifaRequest request);
 }
 
-public class CreateTarifaHandler(IDbConnectionFactory dbConnectionFactory) : ICreateTarifaHandler
+public class CreateTarifaHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : ICreateTarifaHandler
 {
     public async Task<CreateTarifaResponse> AddTarifaAsync(CreateTarifaRequest request)
     {
@@ -22,6 +24,8 @@ public class CreateTarifaHandler(IDbConnectionFactory dbConnectionFactory) : ICr
             request.ValorInicial,
             request.ValorPorHora
         });
+
+        await cache.RemoveAsync(TarifaCacheKeys.GetAllTarifas(), token: CancellationToken.None);
 
         return new CreateTarifaResponse(id);
     }

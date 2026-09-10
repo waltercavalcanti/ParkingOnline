@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using ParkingOnline.WebApi.Domain.Tickets;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Tickets.CreateTicket;
 
@@ -9,7 +11,7 @@ public interface ICreateTicketHandler
     Task<CreateTicketResponse> AddTicketAsync(CreateTicketRequest request);
 }
 
-public class CreateTicketHandler(IDbConnectionFactory dbConnectionFactory) : ICreateTicketHandler
+public class CreateTicketHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : ICreateTicketHandler
 {
     public async Task<CreateTicketResponse> AddTicketAsync(CreateTicketRequest request)
     {
@@ -23,6 +25,8 @@ public class CreateTicketHandler(IDbConnectionFactory dbConnectionFactory) : ICr
             request.VeiculoId,
             request.VagaId
         });
+
+        await cache.RemoveAsync(TicketCacheKeys.GetAllTickets(), token: CancellationToken.None);
 
         return new CreateTicketResponse(id);
     }

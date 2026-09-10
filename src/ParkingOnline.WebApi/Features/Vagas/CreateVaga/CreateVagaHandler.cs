@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using ParkingOnline.WebApi.Domain.Vagas;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Vagas.CreateVaga;
 
@@ -9,7 +11,7 @@ public interface ICreateVagaHandler
     Task<CreateVagaResponse> AddVagaAsync(CreateVagaRequest request);
 }
 
-public class CreateVagaHandler(IDbConnectionFactory dbConnectionFactory) : ICreateVagaHandler
+public class CreateVagaHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : ICreateVagaHandler
 {
     public async Task<CreateVagaResponse> AddVagaAsync(CreateVagaRequest request)
     {
@@ -22,6 +24,9 @@ public class CreateVagaHandler(IDbConnectionFactory dbConnectionFactory) : ICrea
             request.Localizacao,
             request.Ocupada
         });
+
+        await cache.RemoveAsync(VagaCacheKeys.GetAllVagas(), token: CancellationToken.None);
+        await cache.RemoveAsync(VagaCacheKeys.GetVagasLivres(), token: CancellationToken.None);
 
         return new CreateVagaResponse(id);
     }

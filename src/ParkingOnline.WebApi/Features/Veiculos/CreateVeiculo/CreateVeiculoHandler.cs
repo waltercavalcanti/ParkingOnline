@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
+using ParkingOnline.WebApi.Domain.Veiculos;
 using ParkingOnline.WebApi.Shared.Data;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace ParkingOnline.WebApi.Features.Veiculos.CreateVeiculo;
 
@@ -9,7 +11,7 @@ public interface ICreateVeiculoHandler
     Task<CreateVeiculoResponse> AddVeiculoAsync(CreateVeiculoRequest request);
 }
 
-public class CreateVeiculoHandler(IDbConnectionFactory dbConnectionFactory) : ICreateVeiculoHandler
+public class CreateVeiculoHandler(IDbConnectionFactory dbConnectionFactory, IFusionCache cache) : ICreateVeiculoHandler
 {
     public async Task<CreateVeiculoResponse> AddVeiculoAsync(CreateVeiculoRequest request)
     {
@@ -24,6 +26,8 @@ public class CreateVeiculoHandler(IDbConnectionFactory dbConnectionFactory) : IC
             request.Placa,
             request.ClienteId
         });
+
+        await cache.RemoveAsync(VeiculoCacheKeys.GetAllVeiculos(), token: CancellationToken.None);
 
         return new CreateVeiculoResponse(id);
     }
